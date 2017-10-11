@@ -8,8 +8,6 @@
 
 #include "Token.hpp"
 
-#include "Token.hpp"
-
 Token::Token(TokenId id, string token_Instance, int token_LineNumber) {
     setTokenId(id);
     setTokenInstance(token_Instance);
