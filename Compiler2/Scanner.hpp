@@ -50,7 +50,7 @@ public:
     virtual deque<char> getCharsFromFile();
     void setFileForPreprocss(string);
     void preprocessInput();
-    void buildToken();
+    Token buildToken();
     void setupForBuildToken();
 };
 

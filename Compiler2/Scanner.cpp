@@ -157,10 +157,12 @@ bool Scanner::isCharOperator(char current_Char) {
     return true;
 }
 
-void Scanner::buildToken() {
+Token Scanner::buildToken() {
     static Token current_Token;
     
     char current_Char = '\0';
+    
+    current_Token.setUpNextToken();
     
     int current_State = 0;
     int next_State = 0;
@@ -179,9 +181,7 @@ void Scanner::buildToken() {
         }
         else if (isExitState(current_State)) {
             current_Token.checkTokenInstance();
-            testScanner(current_Token);
-            current_Token.setUpNextToken();
-            next_State = current_State = 0;
+            break;
         }
         
         if (!dontAppendChar(current_Char, current_State)) {
@@ -196,6 +196,7 @@ void Scanner::buildToken() {
             putBackChar(current_Char);
         }
     }
+    return current_Token;
 }
 
 void Scanner::setupForBuildToken() {
