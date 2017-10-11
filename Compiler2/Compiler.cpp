@@ -15,7 +15,7 @@ Compiler::Compiler(string inputFileName) {
 }
 
 Compiler::~Compiler() {
-    
+    setInputFileName("");
 }
 
 void Compiler::setInputFileName(string inputFileName) {
@@ -27,8 +27,6 @@ string Compiler::getInputFileName() {
 }
 
 void Compiler::runScanner() {
-    m_scanner.setFileForPreprocss(getInputFileName());
-    m_scanner.preprocessInput();
-    m_scanner.setupForBuildToken();
-    m_scanner.buildToken();
+    m_testScanner.setFileName(getInputFileName());
+    m_testScanner.testScanner();
 }

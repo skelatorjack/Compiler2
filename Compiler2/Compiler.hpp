@@ -10,12 +10,12 @@
 #define COMPILER_HPP
 
 #include "Includes.hpp"
-#include "Scanner.hpp"
+#include "TestScanner.hpp"
 
 class Compiler {
 private:
     string m_inputFileName;
-    Scanner m_scanner;
+    TestScanner m_testScanner;
     
 public:
     Compiler(string="");
