@@ -62,7 +62,7 @@ public:
     void appendChar(char);
     void checkTokenInstance();
     void setUpNextToken();
-    void toString();
+    void toString() const;
     char getLastCharOfInstance();
 };
 
