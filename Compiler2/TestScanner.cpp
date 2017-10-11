@@ -17,11 +17,16 @@ TestScanner::~TestScanner() {
 }
 
 void TestScanner::testScanner() {
+    Token token;
+    
     m_scanner.setFileForPreprocss(getFileName());
     m_scanner.preprocessInput();
     m_scanner.setupForBuildToken();
     
-    
+    do {
+        token = m_scanner.buildToken();
+        printToken(token);
+    } while (token.getTokenId() != EOF_tk);
 }
 
 void TestScanner::setFileName(string file_Name) {
