@@ -173,9 +173,9 @@ TokenId Token::getValueWithKey(string key, const char WHICH_MAP) {
 }
 
 void Token::toString() const {
-    cout << getTokenId() << " ";
-    cout << getTokenInstance() << " ";
-    cout << getTokenLineNumber() << endl;
+    cout << "ID: " << getTokenId() << " ";
+    cout << "Instance: " << getTokenInstance() << " ";
+    cout << "Line Number: " << getTokenLineNumber() << endl;
 }
 
 void Token::setUpNextToken() {
