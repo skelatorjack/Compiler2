@@ -33,15 +33,15 @@ void Token::setTokenLineNumber(int lineNumber) {
     m_tokenLineNumber = lineNumber;
 }
 
-TokenId Token::getTokenId() {
+TokenId Token::getTokenId() const {
     return m_tokenId;
 }
 
-string Token::getTokenInstance() {
+string Token::getTokenInstance() const {
     return m_tokenInstance;
 }
 
-int Token::getTokenLineNumber() {
+int Token::getTokenLineNumber() const {
     return m_tokenLineNumber;
 }
 
@@ -172,7 +172,7 @@ TokenId Token::getValueWithKey(string key, const char WHICH_MAP) {
     return id;
 }
 
-void Token::toString() {
+void Token::toString() const {
     cout << getTokenId() << " ";
     cout << getTokenInstance() << " ";
     cout << getTokenLineNumber() << endl;

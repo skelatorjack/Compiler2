@@ -54,10 +54,10 @@ public:
     void setTokenId(TokenId);
     void setTokenInstance(string);
     void setTokenLineNumber(int);
+    TokenId getTokenId() const;
+    string getTokenInstance() const;
+    int getTokenLineNumber() const;
     
-    TokenId getTokenId();
-    string getTokenInstance();
-    int getTokenLineNumber();
     void incrementLineNumber();
     void appendChar(char);
     void checkTokenInstance();
