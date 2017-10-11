@@ -7,3 +7,36 @@
 //
 
 #include "TestScanner.hpp"
+
+TestScanner::TestScanner(string file_Name) {
+    setFileName(file_Name);
+}
+
+TestScanner::~TestScanner() {
+    clearString();
+}
+
+void TestScanner::testScanner() {
+    m_scanner.setFileForPreprocss(getFileName());
+    m_scanner.preprocessInput();
+    m_scanner.setupForBuildToken();
+    
+    
+}
+
+void TestScanner::setFileName(string file_Name) {
+    m_fileName = file_Name;
+}
+
+string TestScanner::getFileName() {
+    return m_fileName;
+}
+// private methods
+
+void TestScanner::printToken(const Token TOKEN) {
+    TOKEN.toString();
+}
+
+void TestScanner::clearString() {
+    setFileName("");
+}
