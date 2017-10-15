@@ -61,7 +61,7 @@ public:
     void incrementLineNumber();
     void appendChar(char);
     void checkTokenInstance();
-    void setUpNextToken();
+    void setUpNextToken(int);
     void toString() const;
     char getLastCharOfInstance();
 };

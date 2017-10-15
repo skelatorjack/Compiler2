@@ -178,9 +178,10 @@ void Token::toString() const {
     cout << "Line Number: " << getTokenLineNumber() << endl;
 }
 
-void Token::setUpNextToken() {
+void Token::setUpNextToken(int new_LineNumber) {
     setTokenInstance("");
     setTokenId(EOF_tk);
+    setTokenLineNumber(new_LineNumber);
 }
 
 char Token::getLastCharOfInstance() {
