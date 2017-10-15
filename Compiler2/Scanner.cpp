@@ -159,10 +159,11 @@ bool Scanner::isCharOperator(char current_Char) {
 
 Token Scanner::buildToken() {
     static Token current_Token;
+    static int saved_LineNumber = 1;
     
     char current_Char = '\0';
     
-    current_Token.setUpNextToken();
+    current_Token.setUpNextToken(saved_LineNumber);
     
     int current_State = 0;
     int next_State = 0;
@@ -176,7 +177,8 @@ Token Scanner::buildToken() {
         current_State = next_State;
         
         if (isCharNewLine(current_Char)) {
-            current_Token.incrementLineNumber();
+            //current_Token.incrementLineNumber();
+            saved_LineNumber++;
         }
         
         if (isErrorState(current_State)) {
