@@ -48,7 +48,7 @@ private:
     TokenId getValueWithKey(string, const char);
     
 public:
-    Token(TokenId=EOF_tk, string="", int=1);
+    Token(TokenId=EOF_tk, string="", int=0);
     ~Token();
     
     void setTokenId(TokenId);

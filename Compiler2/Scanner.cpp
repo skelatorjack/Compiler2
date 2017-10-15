@@ -175,6 +175,10 @@ Token Scanner::buildToken() {
         next_State = getNextState(current_State, current_Char);
         current_State = next_State;
         
+        if (isCharNewLine(current_Char)) {
+            current_Token.incrementLineNumber();
+        }
+        
         if (isErrorState(current_State)) {
             reportError(current_State);
             exit(current_State);
@@ -186,10 +190,6 @@ Token Scanner::buildToken() {
         
         if (!dontAppendChar(current_Char, current_State)) {
             current_Token.appendChar(current_Char);
-        }
-        
-        if (isCharNewLine(current_Char)) {
-            current_Token.incrementLineNumber();
         }
         
         if (!shouldPopChar(current_Char) && isExitState(current_State)) {
