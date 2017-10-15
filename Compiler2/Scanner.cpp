@@ -187,7 +187,15 @@ Token Scanner::buildToken() {
         }
         else if (isExitState(current_State)) {
             current_Token.checkTokenInstance();
-            break;
+            
+            if (current_Token.getTokenInstance().empty()) {
+                current_Token.setUpNextToken(saved_LineNumber);
+                current_State = next_State = 0;
+                continue;
+            }
+            else {
+                break;
+            }
         }
         
         if (!dontAppendChar(current_Char, current_State)) {
