@@ -123,7 +123,7 @@ void Scanner::preprocessInput() {
 }
 
 void Scanner::reportError(const int ERROR_STATE) {
-    
+    cout << "Error invalid character " << ERROR_STATE << endl;
 }
 char Scanner::getChar() {
     return m_chars_From_File.front();
