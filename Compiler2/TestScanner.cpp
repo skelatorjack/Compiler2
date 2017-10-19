@@ -27,6 +27,8 @@ void TestScanner::testScanner() {
         token = m_scanner.buildToken();
         printToken(token);
     } while (token.getTokenId() != EOF_tk);
+    
+    m_scanner.deinit();
 }
 
 void TestScanner::setFileName(string file_Name) {
