@@ -8,18 +8,26 @@
 
 #include "Scanner.hpp"
 
-#include "Scanner.hpp"
-
 // public methods
 
 Scanner::Scanner() {
     buildTable(m_stateTable);
     setUpColumns();
+    setUpMaps();
 }
 
 Scanner::~Scanner() {
+
+}
+
+void Scanner::deinit() {
     m_stateTable.clear();
     columns.clear();
+    m_chars_From_File.clear();
+    m_keyWords.clear();
+    m_delims.clear();
+    m_operators.clear();
+    m_preprocessor.deinit();
 }
 
 void Scanner::setCharsFromFile(deque<char> chars) {
@@ -50,7 +58,7 @@ int Scanner::getColumnNumber(char currentChar) {
     column_Number = getColumn(currentChar);
     
     if (column_Number == -1) {
-        reportError(-3);
+        cout << "Invalid column number " << column_Number << endl;
         exit(-3);
     }
     
@@ -107,7 +115,7 @@ void Scanner::popChar() {
     m_chars_From_File.pop_front();
 }
 bool Scanner::shouldPopChar(const char CUR_CHAR) {
-    return isCharWhiteSpace(CUR_CHAR) || isCharNewLine(CUR_CHAR);
+    return isCharWhiteSpace(CUR_CHAR) || isCharNewLine(CUR_CHAR) || isCharEndOfFile(CUR_CHAR);
 }
 
 bool Scanner::isExitState(const int CUR_STATE) {
@@ -122,9 +130,10 @@ void Scanner::preprocessInput() {
     m_preprocessor.preprocessInput();
 }
 
-void Scanner::reportError(const int ERROR_STATE) {
-    cout << "Error invalid character " << ERROR_STATE << endl;
+void Scanner::reportError(const int ERROR_STATE, const Token INVALID_TOK) {
+    cout << "Error invalid token " << INVALID_TOK.getTokenInstance() << " The state is " << ERROR_STATE << endl;
 }
+
 char Scanner::getChar() {
     return m_chars_From_File.front();
 }
@@ -182,19 +191,22 @@ Token Scanner::buildToken() {
         }
         
         if (isErrorState(current_State)) {
-            reportError(current_State);
+            reportError(current_State, current_Token);
             exit(current_State);
         }
         else if (isExitState(current_State)) {
-            current_Token.checkTokenInstance();
+            checkTokenInstance(current_Token);
             
+            if (!shouldPopChar(current_Char)) {
+                putBackChar(current_Char);
+            }
             if (current_Token.getTokenInstance().empty()) {
                 current_Token.setUpNextToken(saved_LineNumber);
                 current_State = next_State = 0;
                 continue;
             }
             else {
-                break;
+               break;
             }
         }
         
@@ -272,4 +284,123 @@ bool Scanner::doesCurCharEqualLastCharOfToken(const char CUR_CHAR, Token current
 
 void Scanner::putBackChar(const char CUR_CHAR) {
     m_chars_From_File.push_front(CUR_CHAR);
+}
+
+bool Scanner::checkDoesTokenMatchNumber(const Token TOKEN) {
+    const string TOK_INST = TOKEN.getTokenInstance();
+    
+    for (int i = 0; i < TOK_INST.size(); i++) {
+        if (!isdigit(TOK_INST.at(i))) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Scanner::checkDoesTokenMatchKeyWord(const Token TOKEN) {
+    return m_keyWords.find(TOKEN.getTokenInstance().c_str()) != m_keyWords.end();
+}
+
+bool Scanner::checkDoesTokenMatchIdentifier(const Token TOKEN) {
+    return isalpha(atoi(TOKEN.getTokenInstance().c_str()));
+}
+
+bool Scanner::checkDoesTokenMatchOperator(const Token TOKEN) {
+    return m_operators.find(TOKEN.getTokenInstance().c_str()) != m_operators.end();
+}
+
+bool Scanner::checkDoesTokenMatchDelimiter(const Token TOKEN) {
+    return m_delims.find(TOKEN.getTokenInstance().c_str()) != m_delims.end();
+}
+
+void Scanner::checkTokenInstance(Token &token) {
+    if (checkDoesTokenMatchNumber(token) && !token.getTokenInstance().empty()) {
+        token.setTokenId(Num_tk);
+    }
+    else if (checkDoesTokenMatchKeyWord(token)) {
+        token.setTokenId(getValueWithKey(token.getTokenInstance(), 'k'));
+    }
+    else if (checkDoesTokenMatchDelimiter(token)) {
+        token.setTokenId(getValueWithKey(token.getTokenInstance(), 'd'));
+    }
+    else if (checkDoesTokenMatchOperator(token)) {
+        token.setTokenId(getValueWithKey(token.getTokenInstance(), 'o'));
+    }
+    else if (token.getTokenInstance().empty()) {
+        token.setTokenId(EOF_tk);
+    }
+    else {
+        token.setTokenId(Ident_tk);
+    }
+}
+void Scanner::setUpMaps() {
+    setUpKeyWords();
+    setUpOps();
+    setUpDelims();
+}
+void Scanner::setUpKeyWords() {
+    insertValue("Begin", Begin_tk, 'k');
+    insertValue("End", End_tk, 'k');
+    insertValue("Check", Check_tk, 'k');
+    insertValue("Loop", Loop_tk, 'k');
+    insertValue("Void", Void_tk, 'k');
+    insertValue("Var", Var_tk, 'k');
+    insertValue("Return", Return_tk, 'k');
+    insertValue("Input", Input_tk, 'k');
+    insertValue("Output", Output_tk, 'k');
+    insertValue("Program", Program_tk, 'k');
+}
+
+void Scanner::setUpOps() {
+    insertValue("=", Equal_tk,'o');
+    insertValue("<", LT_tk, 'o');
+    insertValue("<=", LTE_tk, 'o');
+    insertValue(">", GT_tk, 'o');
+    insertValue(">=", GTE_tk, 'o');
+    insertValue("!=", ExclEqual_tk, 'o');
+    insertValue("==", DoubleEqual_tk, 'o');
+    insertValue(":", Colon_tk, 'o');
+    insertValue("+", Plus_tk, 'o');
+    insertValue("-", Minus_tk, 'o');
+    insertValue("*", Star_tk, 'o');
+    insertValue("/", Slash_tk, 'o');
+    insertValue("&", Amp_tk, 'o');
+    insertValue(".", Dot_tk, 'o');
+    insertValue(";", Semicolon_tk, 'o');
+}
+
+void Scanner::setUpDelims() {
+    insertValue("(", LParan_tk, 'd');
+    insertValue(")", RParan_tk, 'd');
+    insertValue("[", LBracket_tk, 'd');
+    insertValue("]", RBracket_tk, 'd');
+    insertValue("{", LBrace_tk, 'd');
+    insertValue("}", RBrace_tk, 'd');
+}
+
+void Scanner::insertValue(string key, TokenId id, const char WHICH_MAP) {
+    switch (WHICH_MAP) {
+        case 'k': m_keyWords.insert(pair<string, TokenId>(key, id));
+            break;
+        case 'd': m_delims.insert(pair<string, TokenId>(key, id));
+            break;
+        case 'o': m_operators.insert(pair<string, TokenId>(key, id));
+            break;
+    }
+}
+
+TokenId Scanner::getValueWithKey(string key, const char WHICH_MAP) {
+    TokenId id = EOF_tk;
+    map<string, TokenId>::const_iterator it;
+    
+    switch(WHICH_MAP) {
+        case 'k': it = m_keyWords.find(key);
+            break;
+        case 'o': it = m_operators.find(key);
+            break;
+        case 'd': it = m_delims.find(key);
+            break;
+    }
+    id = it->second;
+    return id;
 }
