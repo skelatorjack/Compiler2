@@ -47,6 +47,7 @@ public:
     void addOperatorsToOperators();
     void setCharsFromFile(vector<char>);
     virtual deque<char> getCharsFromFile();
+    void deinit();
 };
 
 #endif /* Preprocessor_hpp */

@@ -19,6 +19,12 @@ Preprocessor::~Preprocessor() {
     
 }
 
+void Preprocessor::deinit() {
+    m_chars_From_File.clear();
+    m_operators.clear();
+    m_inputFileName.clear();
+}
+
 void Preprocessor::setFileName(string fileName) {
     m_inputFileName = fileName;
 }
