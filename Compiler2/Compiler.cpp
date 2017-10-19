@@ -8,22 +8,20 @@
 
 #include "Compiler.hpp"
 
-#include "Compiler.hpp"
-
 Compiler::Compiler(string inputFileName) {
-    this->setInputFileName(inputFileName);
+    setInputFileName(inputFileName);
 }
 
 Compiler::~Compiler() {
     setInputFileName("");
 }
 
-void Compiler::setInputFileName(string inputFileName) {
-    this->m_inputFileName = inputFileName;
+void Compiler::setInputFileName(string newInputFileName) {
+    m_inputFileName = newInputFileName;
 }
 
 string Compiler::getInputFileName() {
-    return this->m_inputFileName;
+    return m_inputFileName;
 }
 
 void Compiler::runScanner() {
