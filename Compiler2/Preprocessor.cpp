@@ -146,7 +146,7 @@ void Preprocessor::preprocessInput() {
             setCommentSeen(true);
         }
         
-        if (!getCommentSeen() && !isCharComment(current_Char)) {
+        if ((!getCommentSeen() && !isCharComment(current_Char)) || isCharNewLine(current_Char)) {
             addCharToVector(chars_From_File, current_Char);
         }
         
