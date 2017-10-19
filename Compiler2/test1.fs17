@@ -1,5 +1,7 @@
-Program
-
-= < <= > >= != ==
-: + - * / & . ( ) , { } ; [ ]
-5 c4
+#Jack Pettit
+ CS 4280
+ October 18, 2017
+ Scanner - P1
+#
+Var x;
+Output x;
