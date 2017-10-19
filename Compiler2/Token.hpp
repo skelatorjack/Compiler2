@@ -29,23 +29,6 @@ private:
     TokenId m_tokenId;
     string m_tokenInstance;
     int m_tokenLineNumber;
-    map<string, TokenId> m_keyWords;
-    map<string, TokenId> m_delims;
-    map<string, TokenId> m_operators;
-    
-    bool checkDoesTokenMatchKeyWord();
-    bool checkDoesTokenMatchOperator();
-    bool checkDoesTokenMatchDelimiter();
-    bool checkDoesTokenMatchNumber();
-    bool checkDoesTokenMatchIdentifier();
-    
-    void setUpKeyWords();
-    void setUpOps();
-    void setUpDelims();
-    void setUpMaps();
-    
-    void insertValue(string, TokenId, const char);
-    TokenId getValueWithKey(string, const char);
     
 public:
     Token(TokenId=EOF_tk, string="", int=0);
@@ -60,7 +43,6 @@ public:
     
     void incrementLineNumber();
     void appendChar(char);
-    void checkTokenInstance();
     void setUpNextToken(int);
     void toString() const;
     char getLastCharOfInstance();
