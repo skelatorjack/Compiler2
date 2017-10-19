@@ -2,4 +2,4 @@
 Compiler2.xcodeproj
 
 # Ignore test files
-./Compiler2/*.fs17
+Compiler2/*.fs17
