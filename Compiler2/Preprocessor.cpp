@@ -186,9 +186,10 @@ void Preprocessor::redirectInput() {
     
     redirect_Output.open(getFileName().c_str(), fstream::out);
     
-    while (getline(cin, file_Stuff)) {
+    while (cin >> file_Stuff) {
         redirect_Output << file_Stuff;
         cout << file_Stuff << endl;
+        file_Stuff.clear();
     }
     redirect_Output.close();
 }
