@@ -33,3 +33,6 @@ Scanner.o: Scanner.hpp Scanner.cpp
 
 TestScanner.o: TestScanner.hpp TestScanner.cpp
 	${GPP} ${OBJDBG} ${STD} TestScanner.hpp TestScanner.cpp
+
+clean:
+	rm *.o *.gch testScanner
