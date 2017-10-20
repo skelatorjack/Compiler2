@@ -53,8 +53,8 @@ void Token::appendChar(char newChar) {
 }
 
 void Token::toString() const {
-    cout << "ID: " << getTokenId() << " ";
-    cout << "Instance: " << getTokenInstance() << " ";
+    cout << "ID: " << getTokenId() << ", ";
+    cout << "Instance: " << getTokenInstance() << ", ";
     cout << "Line Number: " << getTokenLineNumber() << endl;
 }
 
