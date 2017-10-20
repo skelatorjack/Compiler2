@@ -18,7 +18,7 @@ enum TokenId {
     
     Equal_tk, LT_tk, LTE_tk, GT_tk, GTE_tk, ExclEqual_tk, DoubleEqual_tk,
     
-    Colon_tk, Plus_tk, Minus_tk, Star_tk, Slash_tk, Amp_tk, Dot_tk, LParan_tk, RParan_tk, Comma_tk, LBrace_tk,
+    Colon_tk, Plus_tk, Minus_tk, Star_tk, Slash_tk, Amp_tk, Percent_tk, Dot_tk, LParan_tk, RParan_tk, Comma_tk, LBrace_tk,
     RBrace_tk, Semicolon_tk, LBracket_tk, RBracket_tk,
     
     Num_tk, Ident_tk, EOF_tk

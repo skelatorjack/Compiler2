@@ -367,6 +367,7 @@ void Scanner::setUpOps() {
     insertValue("&", Amp_tk, 'o');
     insertValue(".", Dot_tk, 'o');
     insertValue(";", Semicolon_tk, 'o');
+    insertValue("%", Percent_tk, 'o');
 }
 
 void Scanner::setUpDelims() {
@@ -376,6 +377,7 @@ void Scanner::setUpDelims() {
     insertValue("]", RBracket_tk, 'd');
     insertValue("{", LBrace_tk, 'd');
     insertValue("}", RBrace_tk, 'd');
+    insertValue(",", Comma_tk, 'd');
 }
 
 void Scanner::insertValue(string key, TokenId id, const char WHICH_MAP) {
