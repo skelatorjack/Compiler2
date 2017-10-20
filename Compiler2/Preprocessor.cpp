@@ -181,15 +181,13 @@ bool Preprocessor::isInputRedirected() {
 }
 
 void Preprocessor::redirectInput() {
-    string file_Stuff = "";
+    char file_Stuff = '\0';
     ofstream redirect_Output;
     
     redirect_Output.open(getFileName().c_str(), fstream::out);
     
-    while (cin >> file_Stuff) {
+    while (cin >> noskipws >> file_Stuff) {
         redirect_Output << file_Stuff;
-        cout << file_Stuff << endl;
-        file_Stuff.clear();
     }
     redirect_Output.close();
 }
