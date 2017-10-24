@@ -17,7 +17,9 @@ public:
     bool isCharWhiteSpace(char);
     bool isCharLetter(char);
     bool isCharDigit(char);
+    // Get chars from the file
     virtual deque<char> getCharsFromFile() = 0;
+    // Get a character from a file or deque
     virtual char getChar() = 0;
     virtual bool isCharOperator(char) = 0;
 };
