@@ -1,10 +1,9 @@
-//
+/*
+//  Jack Pettit
 //  Preprocessor.cpp
 //  Compiler2
-//
-//  Created by Jack Pettit on 10/10/17.
-//  Copyright © 2017 Jack Pettit. All rights reserved.
-//
+//  October 10, 2017.
+*/
 
 #include "Preprocessor.hpp"
 
@@ -19,6 +18,7 @@ Preprocessor::~Preprocessor() {
     
 }
 
+// Free up memory when the Preprocessor is done
 void Preprocessor::deinit() {
     m_chars_From_File.clear();
     m_operators.clear();
@@ -57,6 +57,7 @@ bool Preprocessor::getFileWasRedirected() {
     return m_fileWasRedirected;
 }
 // private methods
+// Used to add characters read from the file
 void Preprocessor::addCharToVector(vector<char> &chars, char toAdd) {
     chars.push_back(toAdd);
 }
@@ -159,6 +160,7 @@ void Preprocessor::preprocessInput() {
     setCharsFromFile(chars_From_File);
 }
 
+// Strip the vector of duplicate whitespaces
 void Preprocessor::stripVector(vector<char> &chars) {
     int num_of_whitespaces = 0;
     
@@ -180,6 +182,7 @@ bool Preprocessor::isInputRedirected() {
     return getFileName() == "redirect.txt";
 }
 
+// Read redirected input into a temporary file
 void Preprocessor::redirectInput() {
     char file_Stuff = '\0';
     ofstream redirect_Output;
@@ -192,12 +195,14 @@ void Preprocessor::redirectInput() {
     redirect_Output.close();
 }
 
+// After reading all characters into a file remove the redirect.txt.
 void Preprocessor::removeRedirectedFile() {
     if (getFileWasRedirected()) {
         remove(getFileName().c_str());
     }
 }
 
+// Initialize the m_operators map
 void Preprocessor::addOperatorsToOperators() {
     m_operators.insert(pair<char, bool>('=', true));
     m_operators.insert(pair<char, bool>('<', true));
@@ -221,6 +226,7 @@ void Preprocessor::addOperatorsToOperators() {
     m_operators.insert(pair<char, bool>(',', true));
 }
 
+// Convert the vector into a deque
 deque<char> Preprocessor::convertVectorTodeque(vector<char> chars) {
     deque<char> char_List;
     
