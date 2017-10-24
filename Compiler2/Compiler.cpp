@@ -1,10 +1,9 @@
-//
+/*
+//  Jack Pettit
 //  Compiler.cpp
 //  Compiler2
-//
-//  Created by Jack Pettit on 10/10/17.
-//  Copyright © 2017 Jack Pettit. All rights reserved.
-//
+//  October 10, 2017
+*/
 
 #include "Compiler.hpp"
 
