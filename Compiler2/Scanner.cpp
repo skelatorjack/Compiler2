@@ -1,10 +1,10 @@
-//
-//  Scanner.cpp
-//  Compiler2
-//
-//  Created by Jack Pettit on 10/10/17.
-//  Copyright © 2017 Jack Pettit. All rights reserved.
-//
+/*
+  Jack Pettit
+  CS 4280
+  Scanner.cpp
+  Compiler2
+  October 10, 2017
+*/
 
 #include "Scanner.hpp"
 
@@ -20,6 +20,7 @@ Scanner::~Scanner() {
 
 }
 
+// Used to free up memory after Scanner is done building Tokens
 void Scanner::deinit() {
     m_stateTable.clear();
     columns.clear();
@@ -52,6 +53,7 @@ bool Scanner::isCharEndOfFile(const char CUR_CHAR) {
     return CUR_CHAR == '\xff';
 }
 
+// Get the column number of the character taken from the deque
 int Scanner::getColumnNumber(char currentChar) {
     int column_Number = -1;
     
@@ -65,6 +67,7 @@ int Scanner::getColumnNumber(char currentChar) {
     return column_Number;
 }
 
+// Return the column number of the given character
 int Scanner::getColumn(const char KEY) {
     int column = -1;
     map<char, int>::const_iterator it;
@@ -76,19 +79,23 @@ int Scanner::getColumn(const char KEY) {
     
     return column;
 }
-
+// Get the next state in the FSA
 int Scanner::getNextState(const int CUR_STATE, const char CUR_CHAR) {
     char mapToKey = '\0';
     
+    // Letters are mapped to the key 'a'.
     if (isCharLetter(CUR_CHAR)) {
         mapToKey = 'a';
     }
+    // Digits are mapped to the key 'b'.
     else if (isCharDigit(CUR_CHAR)) {
         mapToKey = 'b';
     }
+    // Whitespaces are mapped to the key 'w'.
     else if (isCharWhiteSpace(CUR_CHAR)){
         mapToKey = 'w';
     }
+    // End of file character is mapped to the key 'e'.
     else if (isCharEndOfFile(CUR_CHAR)) {
         mapToKey = 'e';
     }
@@ -96,8 +103,10 @@ int Scanner::getNextState(const int CUR_STATE, const char CUR_CHAR) {
         mapToKey = CUR_CHAR;
     }
     
+    // Get the column number for that character
     const int NEW_COLUMN_NUM = getColumnNumber(mapToKey);
     
+    // Throw an expection if invalid access in the vector
     try {
         return getState(CUR_STATE, NEW_COLUMN_NUM);
     }
@@ -114,6 +123,7 @@ int Scanner::getState(const int ROW, const int COL) {
 void Scanner::popChar() {
     m_chars_From_File.pop_front();
 }
+
 bool Scanner::shouldPopChar(const char CUR_CHAR) {
     return isCharWhiteSpace(CUR_CHAR) || isCharNewLine(CUR_CHAR) || isCharEndOfFile(CUR_CHAR);
 }
@@ -126,6 +136,7 @@ bool Scanner::isErrorState(const int CUR_STATE) {
     return CUR_STATE < 0;
 }
 
+// Run the preprocessor
 void Scanner::preprocessInput() {
     m_preprocessor.preprocessInput();
 }
@@ -138,6 +149,7 @@ char Scanner::getChar() {
     return m_chars_From_File.front();
 }
 
+// Read from the file tabledata.txt to populate the FSA.
 void Scanner::buildTable(vector < vector<int> > &table) {
     ifstream table_data;
     
@@ -162,16 +174,19 @@ void Scanner::buildTable(vector < vector<int> > &table) {
     table_data.close();
 }
 
+// DON'T NEED THIS
 bool Scanner::isCharOperator(char current_Char) {
     return true;
 }
 
+// The driver function
 Token Scanner::buildToken() {
     static Token current_Token;
     static int saved_LineNumber = 1;
     
     char current_Char = '\0';
     
+    // Save the linenumber from the previous token
     current_Token.setUpNextToken(saved_LineNumber);
     
     int current_State = 0;
@@ -186,7 +201,6 @@ Token Scanner::buildToken() {
         current_State = next_State;
         
         if (isCharNewLine(current_Char)) {
-            //current_Token.incrementLineNumber();
             saved_LineNumber++;
         }
         
@@ -228,7 +242,7 @@ void Scanner::setupForBuildToken() {
 bool Scanner::isCharsFromFileEmpty() {
     return m_chars_From_File.empty();
 }
-
+// Create keys and column numbers
 void Scanner::setUpColumns() {
     vector<char> chars = getChars();
     
@@ -237,10 +251,12 @@ void Scanner::setUpColumns() {
     }
 }
 
+// insert the pair into the column map
 void Scanner::insertIntoColumns(const char KEY, const int VALUE) {
     columns.insert(pair<char, int>(KEY, VALUE));
 }
 
+// Create all the keys for columns map
 vector<char> Scanner::getChars() {
     vector<char> chars;
     
@@ -273,22 +289,27 @@ vector<char> Scanner::getChars() {
     return chars;
 }
 
+// DON'T NEED THIS
 void Scanner::testScanner(Token token) {
     token.toString();
 }
 
+// DON'T NEED THIS
 bool Scanner::doesCurCharEqualLastCharOfToken(const char CUR_CHAR, Token current_Token) {
     
     return CUR_CHAR == current_Token.getLastCharOfInstance();
 }
 
+// Put back the character that was used in the lookahead
 void Scanner::putBackChar(const char CUR_CHAR) {
     m_chars_From_File.push_front(CUR_CHAR);
 }
 
+// Check if the token is only a number.
 bool Scanner::checkDoesTokenMatchNumber(const Token TOKEN) {
     const string TOK_INST = TOKEN.getTokenInstance();
     
+    // Need to refactor this
     for (int i = 0; i < TOK_INST.size(); i++) {
         if (!isdigit(TOK_INST.at(i))) {
             return false;
@@ -301,6 +322,7 @@ bool Scanner::checkDoesTokenMatchKeyWord(const Token TOKEN) {
     return m_keyWords.find(TOKEN.getTokenInstance().c_str()) != m_keyWords.end();
 }
 
+// DON'T NEED THIS
 bool Scanner::checkDoesTokenMatchIdentifier(const Token TOKEN) {
     return isalpha(atoi(TOKEN.getTokenInstance().c_str()));
 }
@@ -313,6 +335,7 @@ bool Scanner::checkDoesTokenMatchDelimiter(const Token TOKEN) {
     return m_delims.find(TOKEN.getTokenInstance().c_str()) != m_delims.end();
 }
 
+// Assign an id to the current Token
 void Scanner::checkTokenInstance(Token &token) {
     if (checkDoesTokenMatchNumber(token) && !token.getTokenInstance().empty()) {
         token.setTokenId(Num_tk);
@@ -333,11 +356,13 @@ void Scanner::checkTokenInstance(Token &token) {
         token.setTokenId(Ident_tk);
     }
 }
+// Initialize all maps
 void Scanner::setUpMaps() {
     setUpKeyWords();
     setUpOps();
     setUpDelims();
 }
+// Initialize the m_keyWords map
 void Scanner::setUpKeyWords() {
     insertValue("Begin", Begin_tk, 'k');
     insertValue("End", End_tk, 'k');
@@ -350,7 +375,7 @@ void Scanner::setUpKeyWords() {
     insertValue("Output", Output_tk, 'k');
     insertValue("Program", Program_tk, 'k');
 }
-
+// Initialize the m_operators map
 void Scanner::setUpOps() {
     insertValue("=", Equal_tk,'o');
     insertValue("<", LT_tk, 'o');
@@ -370,6 +395,7 @@ void Scanner::setUpOps() {
     insertValue("%", Percent_tk, 'o');
 }
 
+// Initialize the m_delims map
 void Scanner::setUpDelims() {
     insertValue("(", LParan_tk, 'd');
     insertValue(")", RParan_tk, 'd');
@@ -380,6 +406,7 @@ void Scanner::setUpDelims() {
     insertValue(",", Comma_tk, 'd');
 }
 
+// Insert the the tokenId and key into a map
 void Scanner::insertValue(string key, TokenId id, const char WHICH_MAP) {
     switch (WHICH_MAP) {
         case 'k': m_keyWords.insert(pair<string, TokenId>(key, id));
@@ -391,6 +418,7 @@ void Scanner::insertValue(string key, TokenId id, const char WHICH_MAP) {
     }
 }
 
+// Return the TokenId found
 TokenId Scanner::getValueWithKey(string key, const char WHICH_MAP) {
     TokenId id = EOF_tk;
     map<string, TokenId>::const_iterator it;
