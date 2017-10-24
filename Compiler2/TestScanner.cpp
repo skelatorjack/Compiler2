@@ -1,10 +1,10 @@
-//
+/*
+//  Jack Pettit
+//  CS 4280
 //  TestScanner.cpp
 //  Compiler2
-//
-//  Created by Jack Pettit on 10/11/17.
-//  Copyright © 2017 Jack Pettit. All rights reserved.
-//
+//  October 11, 2017
+*/
 
 #include "TestScanner.hpp"
 
@@ -16,6 +16,7 @@ TestScanner::~TestScanner() {
     clearString();
 }
 
+// Test run the scanner
 void TestScanner::testScanner() {
     Token token;
     
