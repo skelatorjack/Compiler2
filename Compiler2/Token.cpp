@@ -48,22 +48,26 @@ void Token::incrementLineNumber() {
     setTokenLineNumber(getTokenLineNumber() + 1);
 }
 
+// Add a character to the token instance
 void Token::appendChar(char newChar) {
     m_tokenInstance.append(1, newChar);
 }
 
+// Print token information
 void Token::toString() const {
     cout << "ID: " << getTokenId() << ", ";
     cout << "Instance: " << getTokenInstance() << ", ";
     cout << "Line Number: " << getTokenLineNumber() << endl;
 }
 
+// Clear the next token and set its line number to new_LineNumber
 void Token::setUpNextToken(int new_LineNumber) {
     setTokenInstance("");
     setTokenId(EOF_tk);
     setTokenLineNumber(new_LineNumber);
 }
 
+// DON'T NEED THIS
 char Token::getLastCharOfInstance() {
     return getTokenInstance().back();
 }

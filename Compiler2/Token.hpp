@@ -1,10 +1,10 @@
-//
+/*
+//  Jack Pettit
+//  CS 4280
 //  Token.hpp
 //  Compiler2
-//
-//  Created by Jack Pettit on 10/10/17.
-//  Copyright © 2017 Jack Pettit. All rights reserved.
-//
+//  October 10, 2017
+*/
 
 #ifndef Token_hpp
 #define Token_hpp
