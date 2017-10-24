@@ -1,10 +1,9 @@
-//
+//  Jack Pettit
+//  CS 4280
 //  main.cpp
-//  Compiler2
-//
-//  Created by Jack Pettit on 10/10/17.
-//  Copyright © 2017 Jack Pettit. All rights reserved.
-//
+//  P1
+//  10/10/17.
+
 
 #include "Includes.hpp"
 #include "Compiler.hpp"
@@ -18,24 +17,30 @@ static string stripRedirect(const char*);
 static bool didReadInInput(int, const char*[]);
 
 int main(int argc, const char * argv[]) {
+    // Set the default file to redirect.txt
     string fileName = "redirect.txt";
     Compiler compiler(fileName);
     
+    // Check for invalid input from command line
     if (preprocessArgs(argc, argv)) {
+        // Checks in input was redirected
         if (didReadInInput(argc, argv)) {
             fileName = stripRedirect(argv[1]);
         }
         else {
             fileName = buildFile(argv[1]);
         }
+        // Set Compiler's inputFile and Preprocessor's inputfile to fileName
         compiler.setInputFileName(fileName);
     }
     
+    // run the scanner
     compiler.runScanner();
     
     return 0;
 }
 
+// Check for file redirection, invalid command line arguments, and checks if input exists
 static bool preprocessArgs(int argCount, const char* args []) {
     string fileName = "";
     
@@ -85,6 +90,7 @@ static bool doesArgCountEqual(const int VALUE, const int VALUE_TO_CHECK) {
     return VALUE == VALUE_TO_CHECK;
 }
 
+// Add the file extension to the input
 static string buildFile(const char* inputName) {
     const string FILE_EXTENSION = ".fs17";
     stringstream fileName;
@@ -94,6 +100,7 @@ static string buildFile(const char* inputName) {
     return fileName.str();
 }
 
+// Check if there were two arguments supplied to the program and if there was redirection
 static bool didReadInInput(int argCount, const char* arg[]) {
     string input;
     
@@ -107,6 +114,7 @@ static bool didReadInInput(int argCount, const char* arg[]) {
     return false;
 }
 
+// Strip the input of '<'
 static string stripRedirect(const char* arg) {
     string input = arg;
     string stripedInput;
