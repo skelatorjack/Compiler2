@@ -33,7 +33,6 @@ private:
     bool isErrorState(const int);
     void reportError(const int, const Token);
     virtual char getChar();
-    virtual bool isCharOperator(char);
     bool isCharsFromFileEmpty();
     void setUpColumns();
     void insertIntoColumns(const char, const int);
