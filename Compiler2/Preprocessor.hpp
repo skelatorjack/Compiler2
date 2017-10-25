@@ -28,7 +28,7 @@ private:
     void openFile( );
     void closeFile();
     virtual char getChar();
-    virtual bool isCharOperator(char);
+    bool isCharOperator(char);
     void stripVector(vector<char>&);
     bool isInputRedirected();
     void redirectInput();

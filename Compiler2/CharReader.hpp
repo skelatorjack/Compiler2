@@ -21,7 +21,6 @@ public:
     virtual deque<char> getCharsFromFile() = 0;
     // Get a character from a file or deque
     virtual char getChar() = 0;
-    virtual bool isCharOperator(char) = 0;
 };
 
 #endif /* CharReader_hpp */

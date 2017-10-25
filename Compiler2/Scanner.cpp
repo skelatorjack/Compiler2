@@ -174,11 +174,6 @@ void Scanner::buildTable(vector < vector<int> > &table) {
     table_data.close();
 }
 
-// DON'T NEED THIS
-bool Scanner::isCharOperator(char current_Char) {
-    return true;
-}
-
 // The driver function
 Token Scanner::buildToken() {
     static Token current_Token;
