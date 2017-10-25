@@ -40,9 +40,7 @@ private:
     int getState(const int, const int);
     int getColumn(const char);
     vector<char> getChars();
-    void testScanner(Token);
     bool isCharEndOfFile(const char);
-    bool doesCurCharEqualLastCharOfToken(const char, Token);
     
     bool checkDoesTokenMatchKeyWord(const Token);
     bool checkDoesTokenMatchOperator(const Token);

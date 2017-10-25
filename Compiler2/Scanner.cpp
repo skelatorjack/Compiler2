@@ -289,18 +289,6 @@ vector<char> Scanner::getChars() {
     return chars;
 }
 
-// DON'T NEED THIS
-void Scanner::testScanner(Token token) {
-    token.toString();
-}
-
-// DON'T NEED THIS
-bool Scanner::doesCurCharEqualLastCharOfToken(const char CUR_CHAR, Token current_Token) {
-    
-    return CUR_CHAR == current_Token.getLastCharOfInstance();
-}
-
-// Put back the character that was used in the lookahead
 void Scanner::putBackChar(const char CUR_CHAR) {
     m_chars_From_File.push_front(CUR_CHAR);
 }
@@ -320,11 +308,6 @@ bool Scanner::checkDoesTokenMatchNumber(const Token TOKEN) {
 
 bool Scanner::checkDoesTokenMatchKeyWord(const Token TOKEN) {
     return m_keyWords.find(TOKEN.getTokenInstance().c_str()) != m_keyWords.end();
-}
-
-// DON'T NEED THIS
-bool Scanner::checkDoesTokenMatchIdentifier(const Token TOKEN) {
-    return isalpha(atoi(TOKEN.getTokenInstance().c_str()));
 }
 
 bool Scanner::checkDoesTokenMatchOperator(const Token TOKEN) {
