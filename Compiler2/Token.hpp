@@ -6,8 +6,8 @@
 //  October 10, 2017
 */
 
-#ifndef Token_hpp
-#define Token_hpp
+#ifndef TOKEN_HPP
+#define TOKEN_HPP
 
 #include "Includes.hpp"
 

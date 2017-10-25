@@ -6,8 +6,8 @@
 //  Copyright © 2017 Jack Pettit. All rights reserved.
 //
 
-#ifndef CharReader_hpp
-#define CharReader_hpp
+#ifndef CHARREADER_HPP
+#define CHARREADER_HPP
 
 #include "Includes.hpp"
 

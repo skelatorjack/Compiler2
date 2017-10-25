@@ -6,8 +6,8 @@
 //  October 10, 2017
 */
 
-#ifndef Preprocessor_hpp
-#define Preprocessor_hpp
+#ifndef PREPROCESSOR_HPP
+#define PREPROCESSOR_HPP
 
 #include "Includes.hpp"
 #include "CharReader.hpp"
