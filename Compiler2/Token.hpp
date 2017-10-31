@@ -46,6 +46,7 @@ public:
     void setUpNextToken(int);
     void toString() const;
     char getLastCharOfInstance();
+    bool doesTokenMatchId(const TokenId) const;
 };
 
 #endif /* Token_hpp */
