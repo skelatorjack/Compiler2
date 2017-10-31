@@ -57,7 +57,7 @@ private:
     TokenId getValueWithKey(string, const char);
     
 public:
-    Scanner();
+    Scanner(string = "", bool = false, bool = false);
     ~Scanner();
     void setCharsFromFile(deque<char>);
     virtual deque<char> getCharsFromFile();

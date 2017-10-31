@@ -10,7 +10,7 @@
 
 // public methods
 
-Scanner::Scanner() {
+Scanner::Scanner(string input_file_name, bool has_seen_comment, bool was_file_redirected) : m_preprocessor(has_seen_comment, input_file_name, was_file_redirected) {
     buildTable(m_stateTable);
     setUpColumns();
     setUpMaps();
