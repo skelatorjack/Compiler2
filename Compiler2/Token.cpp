@@ -67,11 +67,6 @@ void Token::setUpNextToken(int new_LineNumber) {
     setTokenLineNumber(new_LineNumber);
 }
 
-// DON'T NEED THIS
-char Token::getLastCharOfInstance() {
-    return getTokenInstance().back();
-}
-
 bool Token::doesTokenMatchId(const TokenId REQUIREDTOKEN) const {
     return getTokenId() == REQUIREDTOKEN;
 }
