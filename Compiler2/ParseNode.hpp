@@ -34,7 +34,7 @@ public:
     Token getStoredToken() const;
     
     void setChild(shared_ptr<ParseNode>, subtree);
-    shared_ptr<ParseNode> getChild() const;
+    shared_ptr<ParseNode> getChild(subtree) const;
     
     void setNonTerminal(string = "");
     string getNonTerminal() const;
