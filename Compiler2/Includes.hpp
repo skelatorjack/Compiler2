@@ -18,6 +18,7 @@
 #include <iterator>
 #include <cctype>
 #include <deque>
+#include <memory>
 
 using namespace std;
 #endif /* Includes_h */
