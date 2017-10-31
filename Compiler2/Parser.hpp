@@ -20,6 +20,7 @@ private:
     
     // grab a token from the Scanner
     void getTokenFromScanner();
+    void deinit();
     
     void program();
     void block();
@@ -40,13 +41,15 @@ private:
     void RO();
     
 public:
-    Parser();
+    Parser(string = "", bool = false, bool = false);
     ~Parser();
     void runParser();
     
-    void setCurrentToken(Token);
+    void setCurrentToken(const Token);
     Token getCurrentToken() const;
     
+    void setParseTree(const ParseTree);
+    ParseTree getParseTree() const;
 };
 
 #endif /* Parser_hpp */
