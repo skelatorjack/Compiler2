@@ -113,3 +113,19 @@ void Parser::assign() {
 void Parser::RO() {
     
 }
+
+shared_ptr<ParseNode> Parser::createNewNode(const string NON_TERM) {
+    shared_ptr<ParseNode> newNode;
+    newNode->setNonTerminal(NON_TERM);
+    newNode->setStoredToken(getCurrentToken());
+    
+    return newNode;
+}
+
+void Parser::printError(const string MESSAGE, const int ERROR_CODE) {
+    cout << "Parser Error: invalid token at line number " << getCurrentToken().getTokenLineNumber() << " " << MESSAGE << endl;
+    
+    exit(ERROR_CODE);
+}
+
+

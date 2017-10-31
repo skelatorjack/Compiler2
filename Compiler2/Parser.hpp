@@ -40,6 +40,9 @@ private:
     void assign();
     void RO();
     
+    shared_ptr<ParseNode> createNewNode(const string);
+    void printError(const string, const int);
+    
 public:
     Parser(string = "", bool = false, bool = false);
     ~Parser();
