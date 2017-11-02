@@ -82,3 +82,10 @@ string ParseNode::getNonTerminal() const {
     return m_nonTerminal;
 }
 
+void ParseNode::setStoredToken(const Token TOKEN) {
+    m_storedToken = TOKEN;
+}
+
+Token ParseNode::getStoredToken() const {
+    return m_storedToken;
+}
