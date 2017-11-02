@@ -44,7 +44,7 @@ private:
     void printError(const string, const int);
     
 public:
-    Parser(string = "", bool = false, bool = false);
+    Parser(bool = false, string = "", bool = false);
     ~Parser();
     void runParser();
     
@@ -53,6 +53,7 @@ public:
     
     void setParseTree(const ParseTree);
     ParseTree getParseTree() const;
+    void setScannersFile(string);
 };
 
 #endif /* Parser_hpp */

@@ -8,7 +8,7 @@
 
 #include "Parser.hpp"
 
-Parser::Parser(string file_name, bool has_seen_comment, bool was_file_redirected) : m_scanner(file_name, has_seen_comment, was_file_redirected), m_parseTree(nullptr) {
+Parser::Parser(bool has_seen_comment, string file_name, bool was_file_redirected) : m_scanner(file_name, has_seen_comment, was_file_redirected), m_parseTree(nullptr) {
     
 }
 
@@ -36,6 +36,9 @@ void Parser::setParseTree(const ParseTree NEW_PARSE_TREE) {
     m_parseTree = NEW_PARSE_TREE;
 }
 
+void Parser::setScannersFile(string scanner_file) {
+    m_scanner.setFileForPreprocss(scanner_file);
+}
 // private methods
 
 void Parser::getTokenFromScanner() {
@@ -115,8 +118,7 @@ void Parser::RO() {
 }
 
 shared_ptr<ParseNode> Parser::createNewNode(const string NON_TERM) {
-    shared_ptr<ParseNode> newNode;
-    newNode->setNonTerminal(NON_TERM);
+    shared_ptr<ParseNode> newNode(new ParseNode(nullptr, NON_TERM));
     newNode->setStoredToken(getCurrentToken());
     
     return newNode;
