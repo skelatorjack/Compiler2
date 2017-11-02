@@ -8,44 +8,40 @@
 #include "Includes.hpp"
 #include "Compiler.hpp"
 
-static bool preprocessArgs(int, const char*[]);
+static void preprocessArgs(int, const char*[], bool&);
 static bool isFileValid(const string);
 static bool validNumOfArgs(int);
 static string buildFile(const char*);
 static bool doesArgCountEqual(const int, const int);
-static string stripRedirect(const char*);
-static bool didReadInInput(int, const char*[]);
+static bool didRedirectInput(int, const char*[]);
 
 int main(int argc, const char * argv[]) {
     // Set the default file to redirect.txt
-    string fileName = "redirect.txt";
-    Compiler compiler(fileName);
+    string fileName = "";
+    bool was_file_passed_in = false;
     
     // Check for invalid input from command line
-    if (preprocessArgs(argc, argv)) {
-        // Checks in input was redirected
-        if (didReadInInput(argc, argv)) {
-            fileName = stripRedirect(argv[1]);
-        }
-        else {
-            fileName = buildFile(argv[1]);
-        }
-        // Set Compiler's inputFile and Preprocessor's inputfile to fileName
-        compiler.setInputFileName(fileName);
-    }
+    preprocessArgs(argc, argv, was_file_passed_in);
     
-    // run the scanner
-    compiler.runScanner();
+    if (was_file_passed_in) {
+        fileName = argv[1];
+    }
+    else {
+        fileName = "redirect.txt";
+    }
+    Compiler compiler(fileName);
+    compiler.runCompiler();
     
     return 0;
 }
 
+
 // Check for file redirection, invalid command line arguments, and checks if input exists
-static bool preprocessArgs(int argCount, const char* args []) {
+static void preprocessArgs(int argCount, const char* args [], bool &was_file_passed_in) {
     string fileName = "";
     
-    if (didReadInInput(argCount, args)) {
-        return true;
+    if (didRedirectInput(argCount, args)) {
+        was_file_passed_in = true;
     }
     else if (validNumOfArgs(argCount) && doesArgCountEqual(argCount, 2)) {
         fileName = buildFile(args[1]);
@@ -54,10 +50,10 @@ static bool preprocessArgs(int argCount, const char* args []) {
             cout << "File is not valid.\n";
             exit(1);
         }
-        return true;
+        was_file_passed_in = true;
     }
     else if (doesArgCountEqual(argCount, 1)) {
-        return false;
+        was_file_passed_in = false;
     }
     else {
         cout << "Invalid number of args " << argCount << endl;
@@ -90,21 +86,11 @@ static bool doesArgCountEqual(const int VALUE, const int VALUE_TO_CHECK) {
     return VALUE == VALUE_TO_CHECK;
 }
 
-// Add the file extension to the input
-static string buildFile(const char* inputName) {
-    const string FILE_EXTENSION = ".fs17";
-    stringstream fileName;
-    
-    fileName << inputName << FILE_EXTENSION;
-    
-    return fileName.str();
-}
-
 // Check if there were two arguments supplied to the program and if there was redirection
-static bool didReadInInput(int argCount, const char* arg[]) {
+static bool didRedirectInput(int argCount, const char* arg[]) {
     string input;
     
-    if (argCount == 2) {
+    if (doesArgCountEqual(argCount, 2)) {
         input = arg[1];
         
         if (input.at(0) == '<') {
@@ -114,14 +100,10 @@ static bool didReadInInput(int argCount, const char* arg[]) {
     return false;
 }
 
-// Strip the input of '<'
-static string stripRedirect(const char* arg) {
-    string input = arg;
-    string stripedInput;
+static string buildFile(const char* file_name) {
+    stringstream file_with_extension;
     
-    stripedInput = input.substr(input.find(" ") + 1);
+    file_with_extension << file_name << ".fs17";
     
-    cout << "Input stripped is " << stripedInput << endl;
-    
-    return stripedInput;
+    return file_with_extension.str();
 }
