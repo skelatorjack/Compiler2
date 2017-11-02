@@ -29,7 +29,7 @@ int main(int argc, const char * argv[]) {
     else {
         fileName = "redirect.txt";
     }
-    Compiler compiler(fileName);
+    Compiler compiler(fileName, ".fs17", !was_file_passed_in);
     compiler.runCompiler();
     
     return 0;

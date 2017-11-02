@@ -21,10 +21,10 @@ private:
     Parser m_parser;
     TestScanner m_testScanner;
     
-    void buildFullFile();
+    string buildFullFile();
     
 public:
-    Compiler(string="", string=".fs17");
+    Compiler(string="", string=".fs17", bool = false);
     ~Compiler();
     void setInputFileName(string);
     string getInputFileName() const;

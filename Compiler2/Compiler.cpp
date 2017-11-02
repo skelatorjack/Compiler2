@@ -7,7 +7,7 @@
 
 #include "Compiler.hpp"
 
-Compiler::Compiler(string inputFileName, string extension) : m_inputFileName(inputFileName), m_parser(inputFileName, false, false), m_EXTENSION(extension)  {
+Compiler::Compiler(string inputFileName, string extension, bool was_file_redirected) : m_inputFileName(inputFileName), m_inputFileName_w_Extension(buildFullFile()),m_parser(false, m_inputFileName_w_Extension, was_file_redirected), m_EXTENSION(extension)  {
     buildFullFile();
     m_testScanner.setFileName(getFullFileName());
 }
@@ -25,12 +25,12 @@ string Compiler::getInputFileName() const {
 }
 
 void Compiler::runCompiler() {
-    //m_parser.runParser();
-    m_testScanner.testScanner();
+    m_parser.runParser();
+    //m_testScanner.testScanner();
 }
 
-void Compiler::buildFullFile() {
-    setFullFileName(getInputFileName().append(getFileExtension()));
+string Compiler::buildFullFile() {
+    return getInputFileName().append(getFileExtension());
 }
 
 void Compiler::setFullFileName(string new_Full_File_Name_Extension) {
