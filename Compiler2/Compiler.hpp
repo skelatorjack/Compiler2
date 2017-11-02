@@ -10,19 +10,29 @@
 #define COMPILER_HPP
 
 #include "Includes.hpp"
+#include "Parser.hpp"
 #include "TestScanner.hpp"
 
 class Compiler {
 private:
     string m_inputFileName;
+    const string m_EXTENSION;
+    string m_inputFileName_w_Extension;
+    Parser m_parser;
     TestScanner m_testScanner;
     
+    void buildFullFile();
+    
 public:
-    Compiler(string="");
+    Compiler(string="", string=".fs17");
     ~Compiler();
     void setInputFileName(string);
-    string getInputFileName();
+    string getInputFileName() const;
     void runScanner();
+    void runCompiler();
+    string getFullFileName() const;
+    void setFullFileName(string);
+    string getFileExtension() const;
 };
 
 #endif /* Compiler_hpp */
