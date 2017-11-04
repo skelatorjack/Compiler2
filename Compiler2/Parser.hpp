@@ -31,7 +31,6 @@ private:
     void expr();
     void M();
     void F();
-    void T();
     void R();
     void stats();
     void stat();

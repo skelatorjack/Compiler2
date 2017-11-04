@@ -166,10 +166,6 @@ void Parser::F() {
     return;
 }
 
-void Parser::T() {
-    
-}
-
 void Parser::R() {
     if (doesCurrentTokenMatchExpectedToken(LBracket_tk)) {
         getTokenFromScanner();
