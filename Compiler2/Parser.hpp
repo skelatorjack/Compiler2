@@ -20,7 +20,7 @@ private:
     
     // grab a token from the Scanner
     void getTokenFromScanner();
-    bool doesCurrentTokenMatchExpected(const TokenId) const;
+    bool doesCurrentTokenMatchExpectedToken(const TokenId) const;
     void deinit();
     bool isCurrentTokenAStat() const;
     

@@ -58,7 +58,7 @@ void Parser::program() {
     vars();
     block();
     
-    if (!doesCurrentTokenMatchExpected(EOF_tk)) {
+    if (!doesCurrentTokenMatchExpectedToken(EOF_tk)) {
         printError("Expected End of file", -1);
     }
     else {
@@ -69,13 +69,13 @@ void Parser::program() {
 }
 
 void Parser::block() {
-    if (doesCurrentTokenMatchExpected(Begin_tk)) {
+    if (doesCurrentTokenMatchExpectedToken(Begin_tk)) {
         getTokenFromScanner();
         
         vars();
         stats();
         
-        if (doesCurrentTokenMatchExpected(End_tk)) {
+        if (doesCurrentTokenMatchExpectedToken(End_tk)) {
             getTokenFromScanner();
         }
         else {
@@ -89,10 +89,10 @@ void Parser::block() {
 }
 
 void Parser::vars() {
-    if (doesCurrentTokenMatchExpected(Var_tk)) {
+    if (doesCurrentTokenMatchExpectedToken(Var_tk)) {
         getTokenFromScanner();
         
-        if (doesCurrentTokenMatchExpected(Ident_tk)) {
+        if (doesCurrentTokenMatchExpectedToken(Ident_tk)) {
             getTokenFromScanner();
             mvars();
         }
@@ -104,13 +104,13 @@ void Parser::vars() {
 }
 
 void Parser::mvars() {
-    if (doesCurrentTokenMatchExpected(Dot_tk)) {
+    if (doesCurrentTokenMatchExpectedToken(Dot_tk)) {
         getTokenFromScanner();
     }
-    else if (doesCurrentTokenMatchExpected(Comma_tk)) {
+    else if (doesCurrentTokenMatchExpectedToken(Comma_tk)) {
         getTokenFromScanner();
         
-        if (doesCurrentTokenMatchExpected(Ident_tk)) {
+        if (doesCurrentTokenMatchExpectedToken(Ident_tk)) {
             getTokenFromScanner();
             mvars();
         }
@@ -128,7 +128,7 @@ void Parser::mvars() {
 void Parser::expr() {
     M();
     
-    if (doesCurrentTokenMatchExpected(Plus_tk) || doesCurrentTokenMatchExpected(Minus_tk)) {
+    if (doesCurrentTokenMatchExpectedToken(Plus_tk) || doesCurrentTokenMatchExpectedToken(Minus_tk)) {
         getTokenFromScanner();
         expr();
     }
@@ -139,7 +139,7 @@ void Parser::expr() {
 void Parser::M() {
     F();
     
-    if (doesCurrentTokenMatchExpected(Percent_tk) || doesCurrentTokenMatchExpected(Star_tk)) {
+    if (doesCurrentTokenMatchExpectedToken(Percent_tk) || doesCurrentTokenMatchExpectedToken(Star_tk)) {
         getTokenFromScanner();
         M();
     }
@@ -148,11 +148,11 @@ void Parser::M() {
 }
 
 void Parser::F() {
-    if (doesCurrentTokenMatchExpected(LParan_tk)) {
+    if (doesCurrentTokenMatchExpectedToken(LParan_tk)) {
         getTokenFromScanner();
         F();
         
-        if (doesCurrentTokenMatchExpected(RParan_tk)) {
+        if (doesCurrentTokenMatchExpectedToken(RParan_tk)) {
             getTokenFromScanner();
         }
         else {
@@ -171,18 +171,18 @@ void Parser::T() {
 }
 
 void Parser::R() {
-    if (doesCurrentTokenMatchExpected(LBracket_tk)) {
+    if (doesCurrentTokenMatchExpectedToken(LBracket_tk)) {
         getTokenFromScanner();
         expr();
         
-        if (doesCurrentTokenMatchExpected(RBracket_tk)) {
+        if (doesCurrentTokenMatchExpectedToken(RBracket_tk)) {
             getTokenFromScanner();
         }
         else {
             printError("Missing ]", -13);
         }
     }
-    else if (doesCurrentTokenMatchExpected(Ident_tk) || doesCurrentTokenMatchExpected(Num_tk)) {
+    else if (doesCurrentTokenMatchExpectedToken(Ident_tk) || doesCurrentTokenMatchExpectedToken(Num_tk)) {
         getTokenFromScanner();
     }
     
@@ -198,22 +198,22 @@ void Parser::stats() {
 
 void Parser::stat() {
     
-    if (doesCurrentTokenMatchExpected(Begin_tk)) {
+    if (doesCurrentTokenMatchExpectedToken(Begin_tk)) {
         block();
     }
-    else if (doesCurrentTokenMatchExpected(Input_tk)) {
+    else if (doesCurrentTokenMatchExpectedToken(Input_tk)) {
         in();
     }
-    else if (doesCurrentTokenMatchExpected(Output_tk)) {
+    else if (doesCurrentTokenMatchExpectedToken(Output_tk)) {
         out();
     }
-    else if (doesCurrentTokenMatchExpected(Check_tk)) {
+    else if (doesCurrentTokenMatchExpectedToken(Check_tk)) {
         If();
     }
-    else if (doesCurrentTokenMatchExpected(Loop_tk)) {
+    else if (doesCurrentTokenMatchExpectedToken(Loop_tk)) {
         loop();
     }
-    else if (doesCurrentTokenMatchExpected(Ident_tk)) {
+    else if (doesCurrentTokenMatchExpectedToken(Ident_tk)) {
         assign();
     }
     else {
@@ -232,13 +232,13 @@ void Parser::mStat() {
 }
 
 void Parser::in() {
-    if (doesCurrentTokenMatchExpected(Input_tk)) {
+    if (doesCurrentTokenMatchExpectedToken(Input_tk)) {
         getTokenFromScanner();
         
-        if (doesCurrentTokenMatchExpected(Ident_tk)) {
+        if (doesCurrentTokenMatchExpectedToken(Ident_tk)) {
             getTokenFromScanner();
             
-            if (doesCurrentTokenMatchExpected(Semicolon_tk)) {
+            if (doesCurrentTokenMatchExpectedToken(Semicolon_tk)) {
                 getTokenFromScanner();
             }
             else {
@@ -253,11 +253,11 @@ void Parser::in() {
 }
 
 void Parser::out() {
-    if (doesCurrentTokenMatchExpected(Output_tk)) {
+    if (doesCurrentTokenMatchExpectedToken(Output_tk)) {
         getTokenFromScanner();
         expr();
         
-        if (doesCurrentTokenMatchExpected(Semicolon_tk)) {
+        if (doesCurrentTokenMatchExpectedToken(Semicolon_tk)) {
             getTokenFromScanner();
         }
         else {
@@ -270,16 +270,16 @@ void Parser::out() {
 }
 
 void Parser::If() {
-    if (doesCurrentTokenMatchExpected(Check_tk)) {
+    if (doesCurrentTokenMatchExpectedToken(Check_tk)) {
         getTokenFromScanner();
         
-        if (doesCurrentTokenMatchExpected(LBracket_tk)) {
+        if (doesCurrentTokenMatchExpectedToken(LBracket_tk)) {
             getTokenFromScanner();
             expr();
             RO();
             expr();
             
-            if (doesCurrentTokenMatchExpected(RBracket_tk)) {
+            if (doesCurrentTokenMatchExpectedToken(RBracket_tk)) {
                 getTokenFromScanner();
                 stat();
             }
@@ -298,16 +298,16 @@ void Parser::If() {
 }
 
 void Parser::loop() {
-    if (doesCurrentTokenMatchExpected(Loop_tk)) {
+    if (doesCurrentTokenMatchExpectedToken(Loop_tk)) {
         getTokenFromScanner();
         
-        if (doesCurrentTokenMatchExpected(LBracket_tk)) {
+        if (doesCurrentTokenMatchExpectedToken(LBracket_tk)) {
             getTokenFromScanner();
             expr();
             RO();
             expr();
             
-            if (doesCurrentTokenMatchExpected(RBracket_tk)) {
+            if (doesCurrentTokenMatchExpectedToken(RBracket_tk)) {
                 getTokenFromScanner();
                 stat();
             }
@@ -326,14 +326,14 @@ void Parser::loop() {
 }
 
 void Parser::assign() {
-    if (doesCurrentTokenMatchExpected(Ident_tk)) {
+    if (doesCurrentTokenMatchExpectedToken(Ident_tk)) {
         getTokenFromScanner();
         
-        if (doesCurrentTokenMatchExpected(Colon_tk)) {
+        if (doesCurrentTokenMatchExpectedToken(Colon_tk)) {
             getTokenFromScanner();
             expr();
             
-            if (doesCurrentTokenMatchExpected(Semicolon_tk)) {
+            if (doesCurrentTokenMatchExpectedToken(Semicolon_tk)) {
                 getTokenFromScanner();
             }
             else {
@@ -355,7 +355,7 @@ void Parser::RO() {
     const vector<TokenId> RELATIONAL_OPS = {LT_tk, LTE_tk, GT_tk, GTE_tk, DoubleEqual_tk, ExclEqual_tk};
     
     for (int i = 0; i < RELATIONAL_OPS.size(); i++) {
-        if (doesCurrentTokenMatchExpected(RELATIONAL_OPS.at(i))) {
+        if (doesCurrentTokenMatchExpectedToken(RELATIONAL_OPS.at(i))) {
             getTokenFromScanner();
             return;
         }
@@ -377,7 +377,7 @@ void Parser::printError(const string MESSAGE, const int ERROR_CODE) {
     exit(ERROR_CODE);
 }
 
-bool Parser::doesCurrentTokenMatchExpected(const TokenId EXPECTED_TOKEN) const {
+bool Parser::doesCurrentTokenMatchExpectedToken(const TokenId EXPECTED_TOKEN) const {
     return getCurrentToken().doesTokenMatchId(EXPECTED_TOKEN);
 }
 
@@ -385,7 +385,7 @@ bool Parser::isCurrentTokenAStat() const {
     const vector<TokenId> STAT_IDS {Input_tk, Output_tk, Check_tk, Loop_tk, Ident_tk, Begin_tk};
     
     for (int i = 0; i < STAT_IDS.size(); i++) {
-        if (doesCurrentTokenMatchExpected(STAT_IDS.at(i))) {
+        if (doesCurrentTokenMatchExpectedToken(STAT_IDS.at(i))) {
             return true;
         }
     }
