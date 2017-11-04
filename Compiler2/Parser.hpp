@@ -20,7 +20,9 @@ private:
     
     // grab a token from the Scanner
     void getTokenFromScanner();
+    bool doesCurrentTokenMatchExpected(const TokenId) const;
     void deinit();
+    bool isCurrentTokenAStat() const;
     
     void program();
     void block();
@@ -32,6 +34,7 @@ private:
     void T();
     void R();
     void stats();
+    void stat();
     void mStat();
     void in();
     void out();
