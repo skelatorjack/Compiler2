@@ -55,6 +55,9 @@ void Parser::deinit() {
 }
 
 void Parser::program() {
+    const string PROG_NONTERMINAL = "program";
+    shared_ptr<ParseNode> prog_node = createNewNode(PROG_NONTERMINAL);
+    
     vars();
     block();
     
@@ -69,6 +72,9 @@ void Parser::program() {
 }
 
 void Parser::block() {
+    const string BLOCK_NONTERMINAL = "block";
+    shared_ptr<ParseNode> block_node = createNewNode(BLOCK_NONTERMINAL);
+    
     if (doesCurrentTokenMatchExpectedToken(Begin_tk)) {
         getTokenFromScanner();
         
@@ -89,10 +95,14 @@ void Parser::block() {
 }
 
 void Parser::vars() {
+    const string VARS_NONTERMINAL = "vars";
+    shared_ptr<ParseNode> vars_node = createNewNode(VARS_NONTERMINAL);
+    
     if (doesCurrentTokenMatchExpectedToken(Var_tk)) {
         getTokenFromScanner();
         
         if (doesCurrentTokenMatchExpectedToken(Ident_tk)) {
+            vars_node->setStoredToken(getCurrentToken());
             getTokenFromScanner();
             mvars();
         }
@@ -104,6 +114,9 @@ void Parser::vars() {
 }
 
 void Parser::mvars() {
+    const string MVARS_NONTERMINAL = "mvars";
+    shared_ptr<ParseNode> mvars_node = createNewNode(MVARS_NONTERMINAL);
+    
     if (doesCurrentTokenMatchExpectedToken(Dot_tk)) {
         getTokenFromScanner();
     }
