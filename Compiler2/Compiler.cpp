@@ -9,7 +9,7 @@
 
 Compiler::Compiler(string inputFileName, string extension, bool was_file_redirected) : m_inputFileName(inputFileName), m_inputFileName_w_Extension(buildFullFile()),m_parser(false, m_inputFileName_w_Extension, was_file_redirected), m_EXTENSION(extension)  {
     buildFullFile();
-    m_testScanner.setFileName(getFullFileName());
+    
 }
 
 Compiler::~Compiler() {

@@ -11,7 +11,6 @@
 
 #include "Includes.hpp"
 #include "Parser.hpp"
-#include "TestScanner.hpp"
 
 class Compiler {
 private:
@@ -19,7 +18,6 @@ private:
     const string m_EXTENSION;
     string m_inputFileName_w_Extension;
     Parser m_parser;
-    TestScanner m_testScanner;
     
     string buildFullFile();
     
