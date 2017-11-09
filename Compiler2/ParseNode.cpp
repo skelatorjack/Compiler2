@@ -89,3 +89,11 @@ void ParseNode::setStoredToken(const Token TOKEN) {
 Token ParseNode::getStoredToken() const {
     return m_storedToken;
 }
+
+void ParseNode::printParseNode(const int INDENT) const {
+    cout << setw(INDENT * 2) << getNonTerminal() << " ";
+    
+    if (getStoredToken().getTokenId() != EOF_tk) {
+        getStoredToken().toString();
+    }
+}

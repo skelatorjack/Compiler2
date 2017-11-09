@@ -38,7 +38,7 @@ public:
     
     void setNonTerminal(string = "");
     string getNonTerminal() const;
-    
+    void printParseNode(const int) const;
 };
 
 #endif /* ParseNode_hpp */
