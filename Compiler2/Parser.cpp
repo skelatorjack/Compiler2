@@ -20,7 +20,7 @@ Parser::~Parser() {
 
 void Parser::runParser() {
     getTokenFromScanner();
-    program();
+    getParseTree().setRoot(program());
     
     return;
 }
@@ -54,12 +54,12 @@ void Parser::deinit() {
 
 }
 
-void Parser::program() {
+shared_ptr<ParseNode> Parser::program() {
     const string PROG_NONTERMINAL = "program";
     shared_ptr<ParseNode> prog_node = createNewNode(PROG_NONTERMINAL);
     
-    vars();
-    block();
+    prog_node->setChild(vars(), firstChild);
+    prog_node->setChild(block(), secondChild);
     
     if (!doesCurrentTokenMatchExpectedToken(EOF_tk)) {
         printError("Expected End of file", -1);
@@ -68,18 +68,18 @@ void Parser::program() {
         cout << "Parse OK.\n";
     }
     
-    return;
+    return prog_node;
 }
 
-void Parser::block() {
+shared_ptr<ParseNode> Parser::block() {
     const string BLOCK_NONTERMINAL = "block";
     shared_ptr<ParseNode> block_node = createNewNode(BLOCK_NONTERMINAL);
     
     if (doesCurrentTokenMatchExpectedToken(Begin_tk)) {
         getTokenFromScanner();
         
-        vars();
-        stats();
+        block_node->setChild(vars(), firstChild);
+        block_node->setChild(stats(), secondChild);
         
         if (doesCurrentTokenMatchExpectedToken(End_tk)) {
             getTokenFromScanner();
@@ -91,10 +91,10 @@ void Parser::block() {
     else {
         printError("Expected Begin", -4);
     }
-    return;
+    return block_node;
 }
 
-void Parser::vars() {
+shared_ptr<ParseNode> Parser::vars() {
     const string VARS_NONTERMINAL = "vars";
     shared_ptr<ParseNode> vars_node = createNewNode(VARS_NONTERMINAL);
     
@@ -104,16 +104,16 @@ void Parser::vars() {
         if (doesCurrentTokenMatchExpectedToken(Ident_tk)) {
             vars_node->setStoredToken(getCurrentToken());
             getTokenFromScanner();
-            mvars();
+            vars_node->setChild(mvars(), firstChild);
         }
         else {
             printError("Expected Identifier", -2);
         }
     }
-    return;
+    return vars_node;
 }
 
-void Parser::mvars() {
+shared_ptr<ParseNode> Parser::mvars() {
     const string MVARS_NONTERMINAL = "mvars";
     shared_ptr<ParseNode> mvars_node = createNewNode(MVARS_NONTERMINAL);
     
@@ -124,8 +124,9 @@ void Parser::mvars() {
         getTokenFromScanner();
         
         if (doesCurrentTokenMatchExpectedToken(Ident_tk)) {
+            mvars_node->setStoredToken(getCurrentToken());
             getTokenFromScanner();
-            mvars();
+            mvars_node->setChild(mvars(), firstChild);
         }
         else {
             printError("Expected identifier", -3);
@@ -135,35 +136,51 @@ void Parser::mvars() {
         printError("Expected . or , tokens", -3);
     }
     
-    return;
+    return mvars_node;
 }
 
-void Parser::expr() {
-    M();
+shared_ptr<ParseNode> Parser::expr() {
+    const string EXPR_NONTERMINAL = "expr";
+    shared_ptr<ParseNode> expr_node = createNewNode(EXPR_NONTERMINAL);
+    
+    expr_node->setChild(M(), firstChild);
     
     if (doesCurrentTokenMatchExpectedToken(Plus_tk) || doesCurrentTokenMatchExpectedToken(Minus_tk)) {
+        expr_node->setStoredToken(getCurrentToken());
+        
         getTokenFromScanner();
-        expr();
+        
+        expr_node->setChild(expr(), secondChild);
     }
     
-    return;
+    return expr_node;
 }
 
-void Parser::M() {
-    F();
+shared_ptr<ParseNode> Parser::M() {
+    const string M_NONTERMINAL = "M";
+    shared_ptr<ParseNode> m_node = createNewNode(M_NONTERMINAL);
+    
+    m_node->setChild(F(), firstChild);
     
     if (doesCurrentTokenMatchExpectedToken(Percent_tk) || doesCurrentTokenMatchExpectedToken(Star_tk)) {
+        
+        m_node->setStoredToken(getCurrentToken());
+        
         getTokenFromScanner();
-        M();
+        
+        m_node->setChild(M(), secondChild);
     }
     
-    return;
+    return m_node;
 }
 
-void Parser::F() {
+shared_ptr<ParseNode> Parser::F() {
+    const string F_NONTERMINAL = "F";
+    shared_ptr<ParseNode> f_node = createNewNode(F_NONTERMINAL);
+    
     if (doesCurrentTokenMatchExpectedToken(LParan_tk)) {
         getTokenFromScanner();
-        F();
+        f_node->setChild(F(), firstChild);
         
         if (doesCurrentTokenMatchExpectedToken(RParan_tk)) {
             getTokenFromScanner();
@@ -173,16 +190,19 @@ void Parser::F() {
         }
     }
     else {
-        R();
+        f_node->setChild(R(), firstChild);
     }
     
-    return;
+    return f_node;
 }
 
-void Parser::R() {
+shared_ptr<ParseNode> Parser::R() {
+    const string R_NONTERMINAL = "R";
+    shared_ptr<ParseNode> r_node = createNewNode(R_NONTERMINAL);
+    
     if (doesCurrentTokenMatchExpectedToken(LBracket_tk)) {
         getTokenFromScanner();
-        expr();
+        r_node->setChild(expr(), firstChild);
         
         if (doesCurrentTokenMatchExpectedToken(RBracket_tk)) {
             getTokenFromScanner();
@@ -192,59 +212,74 @@ void Parser::R() {
         }
     }
     else if (doesCurrentTokenMatchExpectedToken(Ident_tk) || doesCurrentTokenMatchExpectedToken(Num_tk)) {
+        r_node->setStoredToken(getCurrentToken());
         getTokenFromScanner();
     }
     
-    return;
+    return r_node;
 }
 
-void Parser::stats() {
-    stat();
-    mStat();
+shared_ptr<ParseNode> Parser::stats() {
+    const string STATS_NONTERMINAL = "stats";
+    shared_ptr<ParseNode> stats_node = createNewNode(STATS_NONTERMINAL);
     
-    return;
+    stats_node->setChild(stat(), firstChild);
+    stats_node->setChild(mStat(), secondChild);
+    
+    return stats_node;
 }
 
-void Parser::stat() {
+shared_ptr<ParseNode> Parser::stat() {
+    const string STAT_NONTERMINAL = "stat";
+    shared_ptr<ParseNode> stat_node = createNewNode(STAT_NONTERMINAL);
     
     if (doesCurrentTokenMatchExpectedToken(Begin_tk)) {
-        block();
+        stat_node->setChild(block(), firstChild);
     }
     else if (doesCurrentTokenMatchExpectedToken(Input_tk)) {
-        in();
+        stat_node->setChild(in(), firstChild);
     }
     else if (doesCurrentTokenMatchExpectedToken(Output_tk)) {
-        out();
+        stat_node->setChild(out(), firstChild);
     }
     else if (doesCurrentTokenMatchExpectedToken(Check_tk)) {
-        If();
+        stat_node->setChild(If(), firstChild);
     }
     else if (doesCurrentTokenMatchExpectedToken(Loop_tk)) {
-        loop();
+        stat_node->setChild(loop(), firstChild);
     }
     else if (doesCurrentTokenMatchExpectedToken(Ident_tk)) {
-        assign();
+        stat_node->setChild(assign(), firstChild);
     }
     else {
         printError("Invalid statement", -6);
     }
     
-    return;
+    return stat_node;
 }
 
-void Parser::mStat() {
+shared_ptr<ParseNode> Parser::mStat() {
+    const string MSTAT_NONTERMINAL = "mStat";
+    shared_ptr<ParseNode> mStat_Node(nullptr);
+    
     if (isCurrentTokenAStat()) {
-        stat();
-        mStat();
+        mStat_Node = createNewNode(MSTAT_NONTERMINAL);
+        
+        mStat_Node->setChild(stat(), firstChild);
+        mStat_Node->setChild(mStat(), secondChild);
     }
-    return;
+    return mStat_Node;
 }
 
-void Parser::in() {
+shared_ptr<ParseNode> Parser::in() {
+    const string IN_NONTERMINAL = "in";
+    shared_ptr<ParseNode> in_node = createNewNode(IN_NONTERMINAL);
+    
     if (doesCurrentTokenMatchExpectedToken(Input_tk)) {
         getTokenFromScanner();
         
         if (doesCurrentTokenMatchExpectedToken(Ident_tk)) {
+            in_node->setStoredToken(getCurrentToken());
             getTokenFromScanner();
             
             if (doesCurrentTokenMatchExpectedToken(Semicolon_tk)) {
@@ -258,13 +293,16 @@ void Parser::in() {
             printError("Expected identifier", -7);
         }
     }
-    return;
+    return in_node;
 }
 
-void Parser::out() {
+shared_ptr<ParseNode> Parser::out() {
+    const string OUT_NONTERMINAL = "out";
+    shared_ptr<ParseNode> out_node = createNewNode(OUT_NONTERMINAL);
+    
     if (doesCurrentTokenMatchExpectedToken(Output_tk)) {
         getTokenFromScanner();
-        expr();
+        out_node->setChild(expr(), firstChild);
         
         if (doesCurrentTokenMatchExpectedToken(Semicolon_tk)) {
             getTokenFromScanner();
@@ -276,21 +314,26 @@ void Parser::out() {
     else {
         printError("Expected Output", -10);
     }
+    
+    return out_node;
 }
 
-void Parser::If() {
+shared_ptr<ParseNode> Parser::If() {
+    const string IF_NODE = "if";
+    shared_ptr<ParseNode> if_node = createNewNode(IF_NODE);
+    
     if (doesCurrentTokenMatchExpectedToken(Check_tk)) {
         getTokenFromScanner();
         
         if (doesCurrentTokenMatchExpectedToken(LBracket_tk)) {
             getTokenFromScanner();
-            expr();
-            RO();
-            expr();
+            if_node->setChild(expr(), firstChild);
+            if_node->setChild(RO(), secondChild);
+            if_node->setChild(expr(), thirdChild);
             
             if (doesCurrentTokenMatchExpectedToken(RBracket_tk)) {
                 getTokenFromScanner();
-                stat();
+                if_node->setChild(stat(), fourthChild);
             }
             else {
                 printError("Expected ]", -14);
@@ -303,22 +346,26 @@ void Parser::If() {
     else {
         printError("Expected Check", -16);
     }
-    return;
+    
+    return if_node;
 }
 
-void Parser::loop() {
+shared_ptr<ParseNode> Parser::loop() {
+    const string LOOP_NONTERMINAL = "loop";
+    shared_ptr<ParseNode> loop_node = createNewNode(LOOP_NONTERMINAL);
+    
     if (doesCurrentTokenMatchExpectedToken(Loop_tk)) {
         getTokenFromScanner();
         
         if (doesCurrentTokenMatchExpectedToken(LBracket_tk)) {
             getTokenFromScanner();
-            expr();
-            RO();
-            expr();
+            loop_node->setChild(expr(), firstChild);
+            loop_node->setChild(RO(), secondChild);
+            loop_node->setChild(expr(), thirdChild);
             
             if (doesCurrentTokenMatchExpectedToken(RBracket_tk)) {
                 getTokenFromScanner();
-                stat();
+                loop_node->setChild(stat(), fourthChild);
             }
             else {
                 printError("Expected ]", -17);
@@ -331,11 +378,16 @@ void Parser::loop() {
     else {
         printError("Expected Loop", -19);
     }
-    return;
+    
+    return loop_node;
 }
 
-void Parser::assign() {
+shared_ptr<ParseNode> Parser::assign() {
+    const string ASSIGN_NONTERMINAL = "assign";
+    shared_ptr<ParseNode> assign_node = createNewNode(ASSIGN_NONTERMINAL);
+    
     if (doesCurrentTokenMatchExpectedToken(Ident_tk)) {
+        assign_node->setStoredToken(getCurrentToken());
         getTokenFromScanner();
         
         if (doesCurrentTokenMatchExpectedToken(Colon_tk)) {
@@ -357,19 +409,24 @@ void Parser::assign() {
         printError("Need identifer to assign to", -12);
     }
     
-    return;
+    return assign_node;
 }
 
-void Parser::RO() {
+shared_ptr<ParseNode> Parser::RO() {
     const vector<TokenId> RELATIONAL_OPS = {LT_tk, LTE_tk, GT_tk, GTE_tk, DoubleEqual_tk, ExclEqual_tk};
+    
+    const string RO_NONTERMINAL = "RO";
+    shared_ptr<ParseNode> ro_node = createNewNode(RO_NONTERMINAL);
     
     for (int i = 0; i < RELATIONAL_OPS.size(); i++) {
         if (doesCurrentTokenMatchExpectedToken(RELATIONAL_OPS.at(i))) {
+            ro_node->setStoredToken(getCurrentToken());
             getTokenFromScanner();
-            return;
+            return ro_node;
         }
     }
     printError("Not a valid relational operator", -19);
+    return nullptr;
 }
 
 shared_ptr<ParseNode> Parser::createNewNode(const string NON_TERM) {
