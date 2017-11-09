@@ -20,7 +20,7 @@ Parser::~Parser() {
 
 void Parser::runParser() {
     getTokenFromScanner();
-    getParseTree().setRoot(program());
+    m_parseTree.setRoot(program());
     m_treeTester.printTree(getParseTree());
 }
 
@@ -430,7 +430,6 @@ shared_ptr<ParseNode> Parser::RO() {
 
 shared_ptr<ParseNode> Parser::createNewNode(const string NON_TERM) {
     shared_ptr<ParseNode> newNode(new ParseNode(nullptr, NON_TERM));
-    newNode->setStoredToken(getCurrentToken());
     
     return newNode;
 }
