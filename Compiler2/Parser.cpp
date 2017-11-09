@@ -8,7 +8,7 @@
 
 #include "Parser.hpp"
 
-Parser::Parser(bool has_seen_comment, string file_name, bool was_file_redirected) : m_scanner(file_name, has_seen_comment, was_file_redirected), m_parseTree(nullptr) {
+Parser::Parser(bool has_seen_comment, string file_name, bool was_file_redirected) : m_scanner(file_name, has_seen_comment, was_file_redirected), m_parseTree(nullptr), m_treeTester() {
     
     m_scanner.preprocessInput();
     m_scanner.setupForBuildToken();
@@ -21,8 +21,7 @@ Parser::~Parser() {
 void Parser::runParser() {
     getTokenFromScanner();
     getParseTree().setRoot(program());
-    
-    return;
+    m_treeTester.printTree(getParseTree());
 }
 
 void Parser::setCurrentToken(const Token NEW_TOKEN) {

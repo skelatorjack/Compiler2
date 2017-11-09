@@ -11,12 +11,14 @@
 
 #include "ParseTree.hpp"
 #include "Scanner.hpp"
+#include "TestTree.hpp"
 
 class Parser {
 private:
     ParseTree m_parseTree;
     Token m_currentToken;
     Scanner m_scanner;
+    TestTree m_treeTester;
     
     // grab a token from the Scanner
     void getTokenFromScanner();
