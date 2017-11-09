@@ -6,4 +6,35 @@
 //  Copyright © 2017 Jack Pettit. All rights reserved.
 //
 
-#include "TestParser.hpp"
+#include "TestTree.hpp"
+
+TestTree::TestTree() {
+    
+}
+
+TestTree::~TestTree() {
+    
+}
+
+bool TestTree::isNodeNull(shared_ptr<ParseNode> cur_Node) {
+    return cur_Node == nullptr;
+}
+
+void TestTree::printTree(ParseTree tree) {
+    printNode(tree.getRoot(), 0);
+}
+
+void TestTree::printNode(shared_ptr<ParseNode> cur_Node, const int DEPTH) {
+    if (isNodeNull(cur_Node)) {
+        return;
+    }
+    
+    cur_Node->printParseNode(DEPTH);
+    
+    printNode(cur_Node->getChild(firstChild), DEPTH + 1);
+    printNode(cur_Node->getChild(secondChild), DEPTH + 1);
+    printNode(cur_Node->getChild(thirdChild), DEPTH + 1);
+    printNode(cur_Node->getChild(fourthChild), DEPTH + 1);
+}
+
+

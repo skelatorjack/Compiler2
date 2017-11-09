@@ -15,7 +15,8 @@ class TestTree {
 public:
     TestTree();
     ~TestTree();
-    void printTree(shared_ptr<ParseNode>, const int);
+    void printTree(ParseTree);
+    void printNode(shared_ptr<ParseNode>, const int);
     bool isNodeNull(shared_ptr<ParseNode>);
 };
 
