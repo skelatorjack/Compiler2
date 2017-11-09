@@ -391,7 +391,7 @@ shared_ptr<ParseNode> Parser::assign() {
         
         if (doesCurrentTokenMatchExpectedToken(Colon_tk)) {
             getTokenFromScanner();
-            expr();
+            assign_node->setChild(expr(), firstChild);
             
             if (doesCurrentTokenMatchExpectedToken(Semicolon_tk)) {
                 getTokenFromScanner();
