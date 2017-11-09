@@ -6,9 +6,17 @@
 //  Copyright © 2017 Jack Pettit. All rights reserved.
 //
 
-#ifndef TestParser_hpp
-#define TestParser_hpp
+#ifndef TESTTREE_HPP
+#define TESTTREE_HPP
 
-#include <stdio.h>
+#include "ParseTree.hpp"
+
+class TestTree {
+public:
+    TestTree();
+    ~TestTree();
+    void printTree(shared_ptr<ParseNode>, const int);
+    bool isNodeNull(shared_ptr<ParseNode>);
+};
 
 #endif /* TestParser_hpp */
