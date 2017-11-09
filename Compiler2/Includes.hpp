@@ -19,6 +19,7 @@
 #include <cctype>
 #include <deque>
 #include <memory>
+#include <iomanip>
 
 using namespace std;
 #endif /* Includes_h */
