@@ -91,9 +91,11 @@ Token ParseNode::getStoredToken() const {
 }
 
 void ParseNode::printParseNode(const int INDENT) const {
-    cout << setw(INDENT * 2) << getNonTerminal() << " ";
+    cout << setw(INDENT * 2) << setfill(' ') << getNonTerminal() << " ";
     
     if (getStoredToken().getTokenId() != EOF_tk) {
         getStoredToken().toString();
     }
+    
+    cout << endl;
 }
