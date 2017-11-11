@@ -10,14 +10,14 @@ OBJDBG=${OBJ} ${DBG}
 EXEC=-o
 STD=--std=c++11
 
-testScanner: main.o CharReader.o Preprocessor.o Token.o Scanner.o TestScanner.o Compiler.o
-	${GPP} ${EXEC} testScanner ${DBG} ${STD} main.o CharReader.o Preprocessor.o Token.o Scanner.o TestScanner.o Compiler.o
+P2: main.o CharReader.o Preprocessor.o Token.o Scanner.o ParseNode.o ParseTree.o Parser.o TestTree.o Compiler.o
+	${GPP} ${EXEC} P2 ${DBG} ${STD} main.o CharReader.o Preprocessor.o Token.o Scanner.o ParseNode.o ParseTree.o Parser.o TestTree.o Compiler.o
 
 main.o: Includes.hpp Compiler.hpp main.cpp
 	${GPP} ${OBJDBG} ${STD} Includes.hpp Compiler.hpp main.cpp
 
-Compiler.o: TestScanner.hpp Compiler.hpp Compiler.cpp
-	${GPP} ${OBJDBG} ${STD} TestScanner.hpp Compiler.hpp Compiler.cpp
+Compiler.o: Compiler.hpp Compiler.cpp
+	${GPP} ${OBJDBG} ${STD} Compiler.hpp Compiler.cpp
 
 CharReader.o: CharReader.hpp CharReader.cpp
 	${GPP} ${OBJDBG} ${STD} CharReader.hpp CharReader.cpp
@@ -31,8 +31,17 @@ Token.o: Token.hpp Token.cpp
 Scanner.o: Scanner.hpp Scanner.cpp
 	${GPP} ${OBJDBG} ${STD} Scanner.hpp Scanner.cpp
 
-TestScanner.o: TestScanner.hpp TestScanner.cpp
-	${GPP} ${OBJDBG} ${STD} TestScanner.hpp TestScanner.cpp
+ParseNode.o: ParseNode.hpp ParseNode.cpp
+	${GPP} ${OBJDBG} ${STD} ParseNode.hpp ParseNode.cpp
+
+ParseTree.o: ParseTree.hpp ParseTree.cpp
+	${GPP} ${OBJDBG} ${STD} ParseTree.hpp ParseTree.cpp
+
+Parser.o: Parser.hpp Parser.cpp
+	${GPP} ${OBJDBG} ${STD} Parser.hpp Parser.cpp
+
+TestTree.o: TestTree.hpp TestTree.cpp
+	${GPP} ${OBJDBG} ${STD} TestTree.hpp TestTree.cpp
 
 clean:
-	rm *.o *.gch testScanner
+	rm *.o *.gch P2
