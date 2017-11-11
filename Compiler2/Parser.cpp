@@ -95,9 +95,11 @@ shared_ptr<ParseNode> Parser::block() {
 
 shared_ptr<ParseNode> Parser::vars() {
     const string VARS_NONTERMINAL = "vars";
-    shared_ptr<ParseNode> vars_node = createNewNode(VARS_NONTERMINAL);
+    shared_ptr<ParseNode> vars_node(nullptr);
     
     if (doesCurrentTokenMatchExpectedToken(Var_tk)) {
+        
+        vars_node = createNewNode(VARS_NONTERMINAL);
         getTokenFromScanner();
         
         if (doesCurrentTokenMatchExpectedToken(Ident_tk)) {
@@ -114,12 +116,15 @@ shared_ptr<ParseNode> Parser::vars() {
 
 shared_ptr<ParseNode> Parser::mvars() {
     const string MVARS_NONTERMINAL = "mvars";
-    shared_ptr<ParseNode> mvars_node = createNewNode(MVARS_NONTERMINAL);
+    shared_ptr<ParseNode> mvars_node(nullptr);
     
     if (doesCurrentTokenMatchExpectedToken(Dot_tk)) {
         getTokenFromScanner();
     }
     else if (doesCurrentTokenMatchExpectedToken(Comma_tk)) {
+        
+        mvars_node = createNewNode(MVARS_NONTERMINAL);
+        
         getTokenFromScanner();
         
         if (doesCurrentTokenMatchExpectedToken(Ident_tk)) {
