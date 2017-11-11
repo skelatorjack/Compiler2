@@ -18,6 +18,7 @@ public:
     void printTree(ParseTree);
     void printNode(shared_ptr<ParseNode>, const int);
     bool isNodeNull(shared_ptr<ParseNode>);
+    void printIndent(const int);
 };
 
 #endif /* TestParser_hpp */
