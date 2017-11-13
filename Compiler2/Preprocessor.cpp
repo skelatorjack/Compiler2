@@ -189,6 +189,7 @@ void Preprocessor::redirectInput() {
     
     redirect_Output.open(getFileName().c_str(), fstream::out);
     
+    cout << "Enter input:\n";
     while (cin >> noskipws >> file_Stuff) {
         redirect_Output << file_Stuff;
     }
