@@ -17,12 +17,13 @@ private:
     string m_inputFileName;
     const string m_EXTENSION;
     string m_inputFileName_w_Extension;
+    string m_redirectedFile;
     Parser m_parser;
     
     string buildFullFile();
     
 public:
-    Compiler(string="", string=".fs17", bool = false);
+    Compiler(string="", string=".fs17", string="", bool = false);
     ~Compiler();
     void setInputFileName(string);
     string getInputFileName() const;

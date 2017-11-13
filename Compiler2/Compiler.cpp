@@ -7,7 +7,7 @@
 
 #include "Compiler.hpp"
 
-Compiler::Compiler(string inputFileName, string extension, bool was_file_redirected) : m_inputFileName(inputFileName), m_inputFileName_w_Extension(buildFullFile()),m_parser(false, m_inputFileName_w_Extension, was_file_redirected), m_EXTENSION(extension)  {
+Compiler::Compiler(string inputFileName, string extension, string redirectedFile, bool was_file_redirected) : m_inputFileName(inputFileName), m_inputFileName_w_Extension(buildFullFile()), m_redirectedFile(redirectedFile), m_parser(false, m_inputFileName_w_Extension, was_file_redirected), m_EXTENSION(extension)  {
     buildFullFile();
     
 }
