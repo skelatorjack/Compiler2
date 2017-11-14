@@ -7,9 +7,16 @@
 
 #include "Compiler.hpp"
 
-Compiler::Compiler(string inputFileName, string extension, string redirectedFile, bool was_file_redirected) : m_inputFileName(inputFileName), m_inputFileName_w_Extension(buildFullFile()), m_redirectedFile(redirectedFile), m_parser(false, m_inputFileName_w_Extension, was_file_redirected), m_EXTENSION(extension)  {
-    buildFullFile();
+Compiler::Compiler(string inputFileName, string extension, string redirectedFile) : m_inputFileName(inputFileName), m_redirectedFile(redirectedFile),  m_EXTENSION(extension) {
     
+    setFullFileName(buildFullFile());
+    
+    if (wasInputRedirected()) {
+        m_parser.setUpPreprocessor(getRedirectedFile());
+    }
+    else {
+        m_parser.setUpPreprocessor(getFullFileName());
+    }
 }
 
 Compiler::~Compiler() {
@@ -19,7 +26,6 @@ Compiler::~Compiler() {
 void Compiler::setInputFileName(string newInputFileName) {
     m_inputFileName = newInputFileName;
 }
-
 string Compiler::getInputFileName() const {
     return m_inputFileName;
 }
@@ -30,7 +36,23 @@ void Compiler::runCompiler() {
 }
 
 string Compiler::buildFullFile() {
-    return getInputFileName().append(getFileExtension());
+    return m_inputFileName.append(getFileExtension());
+}
+
+void Compiler::setRedirectedFile(string redirected_file) {
+    m_redirectedFile = redirected_file;
+}
+
+string Compiler::getRedirectedFile() const {
+    return m_redirectedFile;
+}
+
+bool Compiler::wasInputRedirected() {
+    return getRedirectedFile() == "redirect.txt";
+}
+
+void Compiler::setPreprocessorFile(const string FILE_NAME) {
+    m_parser.setPreprocessorFile(FILE_NAME);
 }
 
 void Compiler::setFullFileName(string new_Full_File_Name_Extension) {

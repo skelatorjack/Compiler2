@@ -21,9 +21,11 @@ private:
     Parser m_parser;
     
     string buildFullFile();
+    bool wasInputRedirected();
+    void setPreprocessorFile(const string);
     
 public:
-    Compiler(string="", string=".fs17", string="", bool = false);
+    Compiler(string="", string=".fs17", string="");
     ~Compiler();
     void setInputFileName(string);
     string getInputFileName() const;
@@ -32,6 +34,8 @@ public:
     string getFullFileName() const;
     void setFullFileName(string);
     string getFileExtension() const;
+    void setRedirectedFile(string);
+    string getRedirectedFile() const;
 };
 
 #endif /* Compiler_hpp */
