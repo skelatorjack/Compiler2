@@ -23,17 +23,9 @@ int main(int argc, const char * argv[]) {
     // Check for invalid input from command line
     preprocessArgs(argc, argv, fileName, redirectedFile);
     
-    /*
-    if (was_file_passed_in) {
-        fileName = argv[1];
-    }
-    else {
-        fileName = "redirect.txt";
-    }
-     
-    Compiler compiler(fileName, ".fs17", !was_file_passed_in);
+    Compiler compiler(fileName, ".fs17", redirectedFile);
     compiler.runCompiler();
-    */
+   
     
     return 0;
 }
