@@ -28,7 +28,6 @@ void Scanner::deinit() {
     m_keyWords.clear();
     m_delims.clear();
     m_operators.clear();
-    m_preprocessor.deinit();
 }
 
 void Scanner::setCharsFromFile(deque<char> chars) {
