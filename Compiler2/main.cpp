@@ -34,12 +34,6 @@ int main(int argc, const char * argv[]) {
 // Check for file redirection, invalid command line arguments, and checks if input exists
 static void preprocessArgs(int argCount, const char* args [], string &fileName, string &redirectedFileName) {
     
-    cout << "Number of command line arguments: " << argCount << endl;
-    
-    for (int i = 0; i < argCount; i++) {
-        cout << args[i] << " \n";
-    }
-    
     if (!validNumOfArgs(argCount)) {
         cout << "Invalid number of args " << argCount << ". Need zero or one.\n";
         exit(10);
@@ -56,8 +50,6 @@ static void preprocessArgs(int argCount, const char* args [], string &fileName, 
         cout << "File is not valid. Exiting program\n";
     }
     
-    cout << "The file passed in is " << fileName << endl;
-    cout << "The redirected file was " << redirectedFileName << endl;
 }
 
 static bool isFileValid(const string ARG) {
@@ -88,6 +80,7 @@ static bool wasFilePassedIn(int argCount) {
     return doesArgCountEqual(argCount, 2);
 }
 
+// Append the extension to the file passed from the command line
 static string buildFile(const char* file_name) {
     stringstream file_with_extension;
     
