@@ -8,14 +8,22 @@
 
 #include "Parser.hpp"
 
-Parser::Parser(bool has_seen_comment, string file_name, bool was_file_redirected) : m_scanner(file_name, has_seen_comment, was_file_redirected), m_parseTree(nullptr), m_treeTester() {
+Parser::Parser() : m_scanner(), m_parseTree(nullptr), m_treeTester() {
     
-    m_scanner.preprocessInput();
-    m_scanner.setupForBuildToken();
 }
 
 Parser::~Parser() {
     deinit();
+}
+
+void Parser::setUpPreprocessor(const string FILE_NAME) {
+    setPreprocessorFile(FILE_NAME);
+    m_scanner.preprocessInput();
+    m_scanner.setupForBuildToken();
+}
+
+void Parser::setPreprocessorFile(const string FILE_NAME) {
+    m_scanner.setFileForPreprocss(FILE_NAME);
 }
 
 void Parser::runParser() {
