@@ -1,10 +1,10 @@
-//
-//  ParseNode.cpp
-//  Compiler2
-//
-//  Created by Jack Pettit on 10/31/17.
-//  Copyright © 2017 Jack Pettit. All rights reserved.
-//
+/*
+ //  Jack Pettit
+ //  CS 4280
+ //  ParseNode.cpp
+ //  P2
+ //  10/31/17
+*/
 
 #include "ParseNode.hpp"
 

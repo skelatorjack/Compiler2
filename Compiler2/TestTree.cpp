@@ -1,10 +1,11 @@
-//
-//  TestParser.cpp
-//  Compiler2
-//
-//  Created by Jack Pettit on 11/3/17.
-//  Copyright © 2017 Jack Pettit. All rights reserved.
-//
+/*
+ //  Jack Pettit
+ //  CS 4280
+ //  TestTree.cpp
+ //  P2
+ //  11/3/17
+*/
+
 
 #include "TestTree.hpp"
 

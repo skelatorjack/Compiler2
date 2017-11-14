@@ -1,13 +1,13 @@
-//
-//  Parser.hpp
-//  Compiler2
-//
-//  Created by Jack Pettit on 10/31/17.
-//  Copyright © 2017 Jack Pettit. All rights reserved.
-//
+/*
+ //  Jack Pettit
+ //  CS 4280
+ //  Parser.hpp
+ //  P2
+ //  10/31/17
+*/
 
-#ifndef Parser_hpp
-#define Parser_hpp
+#ifndef PARSER_HPP
+#define PARSER_HPP
 
 #include "ParseTree.hpp"
 #include "Scanner.hpp"

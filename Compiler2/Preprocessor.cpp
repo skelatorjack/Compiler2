@@ -15,7 +15,7 @@ Preprocessor::Preprocessor(bool hasSeenComment, string fileName, bool wasFileRed
 }
 
 Preprocessor::~Preprocessor() {
-    
+    deinit();
 }
 
 // Free up memory when the Preprocessor is done

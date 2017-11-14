@@ -17,7 +17,7 @@ Scanner::Scanner(string input_file_name, bool has_seen_comment, bool was_file_re
 }
 
 Scanner::~Scanner() {
-
+    deinit();
 }
 
 // Used to free up memory after Scanner is done building Tokens

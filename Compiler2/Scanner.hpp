@@ -55,6 +55,7 @@ private:
     
     void insertValue(string, TokenId, const char);
     TokenId getValueWithKey(string, const char);
+    void deinit();
     
 public:
     Scanner(string = "", bool = false, bool = false);
@@ -65,7 +66,7 @@ public:
     void preprocessInput();
     Token buildToken();
     void setupForBuildToken();
-    void deinit(); 
+    
 };
 
 #endif /* Scanner_hpp */

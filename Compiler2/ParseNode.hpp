@@ -1,13 +1,13 @@
-//
-//  ParseNode.hpp
-//  Compiler2
-//
-//  Created by Jack Pettit on 10/31/17.
-//  Copyright © 2017 Jack Pettit. All rights reserved.
-//
+/*
+ //  Jack Pettit
+ //  CS 4280
+ //  ParseNode.hpp
+ //  P2
+ //  10/31/17
+*/
 
-#ifndef ParseNode_hpp
-#define ParseNode_hpp
+#ifndef PARSENODE_HPP
+#define PARSENODE_HPP
 
 #include "Includes.hpp"
 #include "Token.hpp"

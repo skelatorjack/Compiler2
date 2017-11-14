@@ -34,6 +34,8 @@ private:
     void redirectInput();
     void removeRedirectedFile();
     deque<char> convertVectorTodeque(vector<char>);
+    void deinit();
+    
 public:
     Preprocessor(bool=false, string="", bool=false);
     ~Preprocessor();
@@ -47,7 +49,6 @@ public:
     void addOperatorsToOperators();
     void setCharsFromFile(vector<char>);
     virtual deque<char> getCharsFromFile();
-    void deinit();
 };
 
 #endif /* Preprocessor_hpp */
