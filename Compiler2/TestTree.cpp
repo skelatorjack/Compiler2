@@ -40,6 +40,7 @@ void TestTree::printNode(shared_ptr<ParseNode> cur_Node, const int DEPTH) {
     printNode(cur_Node->getChild(fourthChild), DEPTH + 1);
 }
 
+// I had a problem with setw. I instead print two whitespace per level.
 void TestTree::printIndent(const int DEPTH) {
     for (int i = 0; i < DEPTH; i++) {
         cout << " " << " ";
