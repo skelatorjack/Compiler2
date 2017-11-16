@@ -11,14 +11,18 @@
 
 #include "Includes.hpp"
 #include "ParseNode.hpp"
+#include "StaticSem.hpp"
 
 class ParseTree {
 private:
     shared_ptr<ParseNode> m_root;
+    StaticSem m_staticSem;
     
-    bool isNodeNull(shared_ptr<ParseNode>);
+    bool isNodeNull(shared_ptr<ParseNode>) const;
     void printNode(shared_ptr<ParseNode>);
     void deinit();
+    void deleteTree(shared_ptr<ParseNode>&);
+    
 public:
     ParseTree(shared_ptr<ParseNode> = nullptr);
     ~ParseTree();
