@@ -47,7 +47,11 @@ shared_ptr<ParseNode> ParseTree::getRoot() const {
     return m_root;
 }
 
-void ParseTree::traverseTree(shared_ptr<ParseNode> root) {
+void ParseTree::traverseTree(shared_ptr<ParseNode> current_node) {
+    if (isNodeNull(current_node)) {
+        return;
+    }
+    
     
 }
         
@@ -55,4 +59,7 @@ bool ParseTree::isNodeNull(shared_ptr<ParseNode> current_node) const {
     return current_node == nullptr;
 }
 
+void ParseTree::runStaticSem() {
+    traverseTree(getRoot());
+}
 

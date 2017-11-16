@@ -22,6 +22,10 @@ private:
     void printNode(shared_ptr<ParseNode>);
     void deinit();
     void deleteTree(shared_ptr<ParseNode>&);
+    bool doesNodeDeclareVars(const shared_ptr<ParseNode>) const;
+    bool doesNodeHoldToken(const shared_ptr<ParseNode>) const;
+    bool isNodeABlock(const shared_ptr<ParseNode>) const;
+    bool doesNodeUseAVar(const shared_ptr<ParseNode>) const;
     
 public:
     ParseTree(shared_ptr<ParseNode> = nullptr);
@@ -29,5 +33,6 @@ public:
     void setRoot(shared_ptr<ParseNode> = nullptr);
     shared_ptr<ParseNode> getRoot() const;
     void traverseTree(shared_ptr<ParseNode>);
+    void runStaticSem();
 };
 #endif /* ParseTree_hpp */
