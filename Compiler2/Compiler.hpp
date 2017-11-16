@@ -19,6 +19,7 @@ private:
     string m_inputFileName_w_Extension;
     string m_redirectedFile;
     Parser m_parser;
+    ParseTree m_parseTree;
     
     string buildFullFile();
     bool wasInputRedirected();
@@ -29,13 +30,16 @@ public:
     ~Compiler();
     void setInputFileName(string);
     string getInputFileName() const;
-    void runScanner();
     void runCompiler();
+    void runFrontEnd();
+    void runBackEnd();
     string getFullFileName() const;
     void setFullFileName(string);
     string getFileExtension() const;
     void setRedirectedFile(string);
     string getRedirectedFile() const;
+    void setParseTree(ParseTree);
+    ParseTree getParseTree() const;
 };
 
 #endif /* Compiler_hpp */

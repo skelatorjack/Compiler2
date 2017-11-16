@@ -7,7 +7,7 @@
 
 #include "Compiler.hpp"
 
-Compiler::Compiler(string inputFileName, string extension, string redirectedFile) : m_inputFileName(inputFileName), m_redirectedFile(redirectedFile),  m_EXTENSION(extension) {
+Compiler::Compiler(string inputFileName, string extension, string redirectedFile) : m_inputFileName(inputFileName), m_redirectedFile(redirectedFile),  m_EXTENSION(extension), m_parseTree() {
     
     setFullFileName(buildFullFile());
     
@@ -31,12 +31,29 @@ string Compiler::getInputFileName() const {
 }
 
 void Compiler::runCompiler() {
+    runFrontEnd();
+    runBackEnd();
+}
+
+void Compiler::runFrontEnd() {
     m_parser.runParser();
-    //m_testScanner.testScanner();
+    setParseTree(m_parseTree.getRoot());
+}
+
+void Compiler::runBackEnd() {
+    
 }
 
 string Compiler::buildFullFile() {
     return m_inputFileName.append(getFileExtension());
+}
+
+void Compiler::setParseTree(ParseTree new_parseTree) {
+    this->m_parseTree = new_parseTree;
+}
+
+ParseTree Compiler::getParseTree() const {
+    return m_parseTree;
 }
 
 void Compiler::setRedirectedFile(string redirected_file) {
