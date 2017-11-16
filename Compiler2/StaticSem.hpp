@@ -16,7 +16,6 @@ class StaticSem {
 
 private:
     deque<Scope> m_listOfScopes;
-    const int MAX_VARS;
     
     void findIncomingToken(const Token) const;
     void verifyIncomingToken(const Token) const;
