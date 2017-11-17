@@ -40,14 +40,6 @@ Token Parser::getCurrentToken() const {
     return m_currentToken;
 }
 
-ParseTree Parser::getParseTree() {
-    return m_parseTree;
-}
-
-void Parser::setParseTree(const ParseTree NEW_PARSE_TREE) {
-    m_parseTree = NEW_PARSE_TREE;
-}
-
 void Parser::setScannersFile(string scanner_file) {
     m_scanner.setFileForPreprocss(scanner_file);
 }
