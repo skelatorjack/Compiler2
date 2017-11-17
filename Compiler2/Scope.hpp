@@ -9,7 +9,7 @@
 #ifndef Scope_hpp
 #define Scope_hpp
 
-#include "StaticSem.hpp"
+#include "Token.hpp"
 
 
 class Scope {
@@ -29,8 +29,9 @@ public:
     void setDepthOfThisScope(int);
     int getVarCount() const;
     int getDepthOfThisScope() const;
+    deque<Token> getStoredVarInThisScope() const;
     
-    void addVar(const Token) const;
-    int checkIfVarIsInCurrentScope(const Token) const;
+    void addVar(const Token);
+    int checkIfVarIsInCurrentScope(const Token, int&) const;
 };
 #endif /* Scope_hpp */

@@ -70,3 +70,7 @@ void Token::setUpNextToken(int new_LineNumber) {
 bool Token::doesTokenMatchId(const TokenId REQUIREDTOKEN) const {
     return getTokenId() == REQUIREDTOKEN;
 }
+
+bool Token::operator==(const Token &TOKEN) const {
+    return getTokenInstance() == TOKEN.getTokenInstance();
+}

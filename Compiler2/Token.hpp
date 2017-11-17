@@ -47,6 +47,7 @@ public:
     void toString() const;
     char getLastCharOfInstance();
     bool doesTokenMatchId(const TokenId) const;
+    bool operator==(const Token&) const;
 };
 
 #endif /* Token_hpp */

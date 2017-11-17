@@ -56,7 +56,7 @@ public:
     Token getCurrentToken() const;
     
     void setParseTree(const ParseTree);
-    ParseTree getParseTree() const;
+    ParseTree getParseTree();
     void setScannersFile(string);
     
     void setPreprocessorFile(const string);

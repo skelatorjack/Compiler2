@@ -41,7 +41,7 @@ void Compiler::runFrontEnd() {
 }
 
 void Compiler::runBackEnd() {
-    
+    m_parseTree.runStaticSem();
 }
 
 string Compiler::buildFullFile() {

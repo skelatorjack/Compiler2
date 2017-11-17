@@ -40,7 +40,7 @@ Token Parser::getCurrentToken() const {
     return m_currentToken;
 }
 
-ParseTree Parser::getParseTree() const {
+ParseTree Parser::getParseTree() {
     return m_parseTree;
 }
 

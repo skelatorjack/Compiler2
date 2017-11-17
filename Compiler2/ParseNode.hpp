@@ -23,12 +23,14 @@ private:
     shared_ptr<ParseNode> m_secondChild;
     shared_ptr<ParseNode> m_thirdChild;
     shared_ptr<ParseNode> m_fourthChild;
-    string m_nonTerminal;                   // Mark which nonterminal this node was created in
+    string m_nonTerminal; // Mark which nonterminal this node was created in
+
+    bool m_isNodeBlock;
     
     void deinit();
     
 public:
-    ParseNode(shared_ptr<ParseNode> = nullptr, string = "");
+    ParseNode(shared_ptr<ParseNode> = nullptr, string = "", bool = false);
     ~ParseNode();
     void setStoredToken(const Token);
     Token getStoredToken() const;
@@ -39,6 +41,9 @@ public:
     void setNonTerminal(string = "");
     string getNonTerminal() const;
     void printParseNode(const int) const;
+    
+    void setIsNodeBlock(const bool);
+    bool getIsNodeBlock() const;
 };
 
 #endif /* ParseNode_hpp */

@@ -8,7 +8,7 @@
 
 #include "ParseNode.hpp"
 
-ParseNode::ParseNode(shared_ptr<ParseNode> children, string non_terminal) : m_storedToken(), m_nonTerminal(non_terminal), m_firstChild(children), m_secondChild(children), m_thirdChild(children), m_fourthChild(children) {
+ParseNode::ParseNode(shared_ptr<ParseNode> children, string non_terminal, bool is_blocknode) : m_storedToken(), m_nonTerminal(non_terminal), m_firstChild(children), m_secondChild(children), m_thirdChild(children), m_fourthChild(children), m_isNodeBlock(is_blocknode) {
     
 }
 
@@ -96,4 +96,12 @@ void ParseNode::printParseNode(const int DEPTH) const {
     if (getStoredToken().getTokenId() != EOF_tk) {
         getStoredToken().toString();
     }
+}
+
+void ParseNode::setIsNodeBlock(const bool new_isNodeBlock) {
+    m_isNodeBlock = new_isNodeBlock;
+}
+
+bool ParseNode::getIsNodeBlock() const {
+    return m_isNodeBlock;
 }

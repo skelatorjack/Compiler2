@@ -26,6 +26,9 @@ private:
     bool doesNodeHoldToken(const shared_ptr<ParseNode>) const;
     bool isNodeABlock(const shared_ptr<ParseNode>) const;
     bool doesNodeUseAVar(const shared_ptr<ParseNode>) const;
+    bool doesNonterminalOfNodeMatchGivenNonterminal(const shared_ptr<ParseNode>, const string) const;
+    
+    bool doesTokenOfNodeMatchGivenTokenId(const Token, const TokenId) const;
     
 public:
     ParseTree(shared_ptr<ParseNode> = nullptr);
