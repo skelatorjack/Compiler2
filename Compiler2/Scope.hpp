@@ -32,6 +32,6 @@ public:
     deque<Token> getStoredVarInThisScope() const;
     
     void addVar(const Token);
-    int checkIfVarIsInCurrentScope(const Token, int&) const;
+    int checkIfVarIsInCurrentScope(const Token, int&, bool&) const;
 };
 #endif /* Scope_hpp */

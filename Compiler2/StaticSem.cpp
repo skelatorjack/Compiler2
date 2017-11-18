@@ -9,7 +9,7 @@
 #include "StaticSem.hpp"
 
 StaticSem::StaticSem(const int TOTAL_VARS) : m_totalVars(TOTAL_VARS) {
-    
+    m_listOfScopes.push_back(Scope());
 }
 
 StaticSem::~StaticSem() {
@@ -31,6 +31,7 @@ void StaticSem::addVarToCurrentScope(const Token TOKEN) {
     
     if (!checkIfVarIsAlreadyDeclared(TOKEN)) {
         m_listOfScopes.back().addVar(TOKEN);
+        incrementTotalVars();
     }
     else {
         reportError(TOKEN, 40);
@@ -40,13 +41,24 @@ void StaticSem::addVarToCurrentScope(const Token TOKEN) {
 
 void StaticSem::searchForToken(const Token TOKEN_TO_SEARCH) const {
     int distance_from_top = 0;
-    int result = 0;
+    int result = -1;
     
-    for (auto i = m_listOfScopes.end(); i != m_listOfScopes.begin(); i--) {
-        result = i->checkIfVarIsInCurrentScope(TOKEN_TO_SEARCH, distance_from_top);
+    deque<Scope> var_scopes = m_listOfScopes;
+    reverse(var_scopes.begin(), var_scopes.end());
+    bool did_find_var = false;
+    
+    for (int i = 0; i < var_scopes.size(); i++) {
+        if (var_scopes.at(i).getVarCount() != 0) {
+            result = var_scopes.at(i).checkIfVarIsInCurrentScope(TOKEN_TO_SEARCH, distance_from_top, did_find_var);
+            if (did_find_var) {
+                break;
+            }
+        }
     }
     
-    reportError(TOKEN_TO_SEARCH, 50);
+    if (result == -1) {
+        reportError(TOKEN_TO_SEARCH, 50);
+    }
 }
 
 void StaticSem::setTotalVars(const int NEW_VARCOUNT) {

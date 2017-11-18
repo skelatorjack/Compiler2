@@ -41,20 +41,31 @@ deque<Token> Scope::getStoredVarInThisScope() const {
 
 void Scope::addVar(const Token TOKEN) {
     m_storedVarsInThisScope.push_back(TOKEN);
+    incrementVarCount();
 }
 
-int Scope::checkIfVarIsInCurrentScope(const Token TOKEN, int &distance_from_top) const {
-    bool was_token_matched = false;
+int Scope::checkIfVarIsInCurrentScope(const Token TOKEN, int &distance_from_top, bool &did_find_var) const {
+    deque<Token> list_of_tokens = m_storedVarsInThisScope;
+    reverse(list_of_tokens.begin(), list_of_tokens.end());
     
-    for (auto i = m_storedVarsInThisScope.end(); i != m_storedVarsInThisScope.begin(); i--) {
-        if (i->getTokenInstance() == TOKEN.getTokenInstance()) {
-            was_token_matched = true;
+    if (getVarCount() == 0) {
+        return -1;
+    }
+    
+    for (int i = 0; i < list_of_tokens.size(); i++) {
+        if (list_of_tokens.at(i).getTokenInstance() == TOKEN.getTokenInstance()) {
+            did_find_var = true;
             break;
         }
         distance_from_top++;
     }
     
-    return distance_from_top;
+    if (did_find_var) {
+        return distance_from_top;
+    }
+    else {
+        return -1;
+    }
 }
 void Scope::incrementVarCount() {
     m_varCount++;
