@@ -36,8 +36,7 @@ void Compiler::runCompiler() {
 }
 
 void Compiler::runFrontEnd() {
-    m_parser.runParser();
-    setParseTree(m_parseTree.getRoot());
+    m_parser.runParser(m_parseTree);
 }
 
 void Compiler::runBackEnd() {

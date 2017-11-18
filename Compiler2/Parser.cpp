@@ -26,10 +26,10 @@ void Parser::setPreprocessorFile(const string FILE_NAME) {
     m_scanner.setFileForPreprocss(FILE_NAME);
 }
 
-void Parser::runParser() {
+void Parser::runParser(ParseTree &comp_ParseTree) {
     getTokenFromScanner();
-    m_parseTree.setRoot(program());
-    m_treeTester.printTree(getParseTree());
+    comp_ParseTree.setRoot(program());
+    m_treeTester.printTree(comp_ParseTree);
 }
 
 void Parser::setCurrentToken(const Token NEW_TOKEN) {

@@ -50,7 +50,7 @@ private:
 public:
     Parser();
     ~Parser();
-    void runParser();
+    void runParser(ParseTree&);
     
     void setCurrentToken(const Token);
     Token getCurrentToken() const;
