@@ -68,7 +68,7 @@ void ParseTree::traverseTree(shared_ptr<ParseNode> current_node) {
     traverseTree(current_node->getChild(thirdChild));
     traverseTree(current_node->getChild(fourthChild));
     
-    if (current_node->getIsNodeBlock()) {
+    if (isNodeABlock(current_node)) {
         m_staticSem.removeCurrentScope();
     }
 }
