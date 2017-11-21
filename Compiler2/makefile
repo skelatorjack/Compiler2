@@ -10,8 +10,8 @@ OBJDBG=${OBJ} ${DBG}
 EXEC=-o
 STD=--std=c++11
 
-comp: main.o CharReader.o Preprocessor.o Token.o Scanner.o ParseNode.o ParseTree.o Parser.o TestTree.o Compiler.o
-	${GPP} ${EXEC} comp ${DBG} ${STD} main.o CharReader.o Preprocessor.o Token.o Scanner.o ParseNode.o ParseTree.o Parser.o TestTree.o Compiler.o
+comp: main.o CharReader.o Preprocessor.o Token.o Scanner.o ParseNode.o ParseTree.o Parser.o TestTree.o StaticSem.o Scope.o Compiler.o
+	${GPP} ${EXEC} comp ${DBG} ${STD} main.o CharReader.o Preprocessor.o Token.o Scanner.o ParseNode.o ParseTree.o Parser.o TestTree.o StaticSem.o Scope.o Compiler.o
 
 main.o: Includes.hpp Compiler.hpp main.cpp
 	${GPP} ${OBJDBG} ${STD} Includes.hpp Compiler.hpp main.cpp
@@ -43,5 +43,11 @@ Parser.o: Parser.hpp Parser.cpp
 TestTree.o: TestTree.hpp TestTree.cpp
 	${GPP} ${OBJDBG} ${STD} TestTree.hpp TestTree.cpp
 
+StaticSem.o: StaticSem.hpp StaticSem.cpp
+	${GPP} ${OBJDBG} ${STD} StaticSem.hpp StaticSem.cpp
+
+Scope.o: Scope.hpp Scope.cpp
+	${GPP} ${OBJDBG} ${STD} Scope.hpp Scope.cpp
+
 clean:
-	rm *.o *.gch P2
+	rm *.o *.gch comp 
