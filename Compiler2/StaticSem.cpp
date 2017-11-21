@@ -25,19 +25,18 @@ void StaticSem::removeCurrentScope() {
 }
 
 void StaticSem::addVarToCurrentScope(const Token TOKEN) {
-    if (getTotalVars() > getMaxVars()) {
-        reportError(TOKEN, 60);
-    }
     
     if (!checkIfVarIsAlreadyDeclared(TOKEN)) {
         m_listOfScopes.back().addVar(TOKEN);
         incrementTotalVars();
-        cout << "Total vars are: " << getTotalVars() << endl;
     }
     else {
         reportError(TOKEN, 40);
     }
     
+    if (getTotalVars() > getMaxVars()) {
+        reportError(TOKEN, 60);
+    }
 }
 
 void StaticSem::searchForToken(const Token TOKEN_TO_SEARCH) const {
@@ -121,7 +120,7 @@ string StaticSem::createMessage(const Token TOKEN,  const int ERROR_CODE) const 
             message << "Cannot find variable " << TOKEN.getTokenInstance() << endl;
             break;
         case 60:
-            message << "Too many variables declared " << endl;
+            message << "Too many variables declared " << TOKEN.getTokenInstance() << " caused it." << endl;
             break;
         default:
             break;
