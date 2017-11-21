@@ -6,4 +6,4 @@ Compiler2/*.fs17
 
 Compiler2/*.o
 Compiler2/*.gch
-Compiler2/P2
+Compiler2/comp
