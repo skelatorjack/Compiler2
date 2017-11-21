@@ -16,6 +16,7 @@ class StaticSem {
 
 private:
     deque<Scope> m_listOfScopes;
+    int m_maxVars;
     int m_totalVars;
     
     void verifyIncomingToken(const Token) const;
@@ -25,11 +26,13 @@ private:
     bool checkIfVarIsAlreadyDeclared(const Token) const;
     
 public:
-    StaticSem(const int = 0);
+    StaticSem(const int = 0, const int = 10);
     ~StaticSem();
     
     void setTotalVars(const int);
     int getTotalVars() const;
+    void setMaxVars(const int);
+    int getMaxVars() const;
     
     void incrementTotalVars();
     void addNewScope();

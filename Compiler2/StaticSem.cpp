@@ -8,7 +8,7 @@
 
 #include "StaticSem.hpp"
 
-StaticSem::StaticSem(const int TOTAL_VARS) : m_totalVars(TOTAL_VARS) {
+StaticSem::StaticSem(const int TOTAL_VARS, const int maxVars) : m_totalVars(TOTAL_VARS), m_maxVars(maxVars) {
     m_listOfScopes.push_back(Scope());
 }
 
@@ -25,13 +25,14 @@ void StaticSem::removeCurrentScope() {
 }
 
 void StaticSem::addVarToCurrentScope(const Token TOKEN) {
-    if (getTotalVars() > 100) {
+    if (getTotalVars() > getMaxVars()) {
         reportError(TOKEN, 60);
     }
     
     if (!checkIfVarIsAlreadyDeclared(TOKEN)) {
         m_listOfScopes.back().addVar(TOKEN);
         incrementTotalVars();
+        cout << "Total vars are: " << getTotalVars() << endl;
     }
     else {
         reportError(TOKEN, 40);
@@ -43,10 +44,12 @@ void StaticSem::searchForToken(const Token TOKEN_TO_SEARCH) const {
     int distance_from_top = 0;
     int result = -1;
     
+    // Reverse the list and start from the current scope
     deque<Scope> var_scopes = m_listOfScopes;
     reverse(var_scopes.begin(), var_scopes.end());
     bool did_find_var = false;
     
+    // Search for the variable being used
     for (int i = 0; i < var_scopes.size(); i++) {
         if (var_scopes.at(i).getVarCount() != 0) {
             result = var_scopes.at(i).checkIfVarIsInCurrentScope(TOKEN_TO_SEARCH, distance_from_top, did_find_var);
@@ -73,6 +76,13 @@ void StaticSem::incrementTotalVars() {
     m_totalVars++;
 }
 
+void StaticSem::setMaxVars(const int MAX) {
+    m_maxVars = MAX;
+}
+
+int StaticSem::getMaxVars() const {
+    return m_maxVars;
+}
 /*
  Case 40 indicates that the identifier was already in current scope.
  Case 50 indicates that the identifier couldn't be found or is not in scope.
