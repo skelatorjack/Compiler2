@@ -10,8 +10,8 @@ OBJDBG=${OBJ} ${DBG}
 EXEC=-o
 STD=--std=c++11
 
-P2: main.o CharReader.o Preprocessor.o Token.o Scanner.o ParseNode.o ParseTree.o Parser.o TestTree.o Compiler.o
-	${GPP} ${EXEC} P2 ${DBG} ${STD} main.o CharReader.o Preprocessor.o Token.o Scanner.o ParseNode.o ParseTree.o Parser.o TestTree.o Compiler.o
+comp: main.o CharReader.o Preprocessor.o Token.o Scanner.o ParseNode.o ParseTree.o Parser.o TestTree.o Compiler.o
+	${GPP} ${EXEC} comp ${DBG} ${STD} main.o CharReader.o Preprocessor.o Token.o Scanner.o ParseNode.o ParseTree.o Parser.o TestTree.o Compiler.o
 
 main.o: Includes.hpp Compiler.hpp main.cpp
 	${GPP} ${OBJDBG} ${STD} Includes.hpp Compiler.hpp main.cpp
