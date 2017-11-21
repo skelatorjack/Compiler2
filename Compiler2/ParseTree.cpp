@@ -98,7 +98,7 @@ bool ParseTree::isNodeABlock(const shared_ptr<ParseNode> CUR_NODE) const {
 }
 
 bool ParseTree::doesNodeUseAVar(const shared_ptr<ParseNode> CUR_NODE) const {
-    return doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "R") || doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "in");
+    return doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "R") || doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "in") || doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "assign");
 }
 
 bool ParseTree::doesTokenOfNodeMatchGivenTokenId(const Token TOKEN, const TokenId ID_TO_MATCH) const {
