@@ -26,7 +26,7 @@ private:
     bool checkIfVarIsAlreadyDeclared(const Token) const;
     
 public:
-    StaticSem(const int = 0, const int = 10);
+    StaticSem(const int = 0, const int = 100);
     ~StaticSem();
     
     void setTotalVars(const int);
