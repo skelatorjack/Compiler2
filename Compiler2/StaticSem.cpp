@@ -39,7 +39,7 @@ void StaticSem::addVarToCurrentScope(const Token TOKEN) {
     }
 }
 
-void StaticSem::searchForToken(const Token TOKEN_TO_SEARCH) const {
+int StaticSem::searchForToken(const Token TOKEN_TO_SEARCH) const {
     int distance_from_top = 0;
     int result = -1;
     
@@ -48,7 +48,7 @@ void StaticSem::searchForToken(const Token TOKEN_TO_SEARCH) const {
     reverse(var_scopes.begin(), var_scopes.end());
     bool did_find_var = false;
     
-    // Search for the variable being used
+    // Search for the variable being used starting with the most recently added variable
     for (int i = 0; i < var_scopes.size(); i++) {
         if (var_scopes.at(i).getVarCount() != 0) {
             result = var_scopes.at(i).checkIfVarIsInCurrentScope(TOKEN_TO_SEARCH, distance_from_top, did_find_var);
@@ -61,6 +61,8 @@ void StaticSem::searchForToken(const Token TOKEN_TO_SEARCH) const {
     if (result == -1) {
         reportError(TOKEN_TO_SEARCH, 50);
     }
+    
+    return result;
 }
 
 void StaticSem::setTotalVars(const int NEW_VARCOUNT) {
