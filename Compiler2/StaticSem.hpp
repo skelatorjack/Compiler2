@@ -1,10 +1,10 @@
-//
+/*
+//  Jack Pettit
+//  CS 4280
 //  StaticSem.hpp
 //  Compiler2
-//
-//  Created by Jack Pettit on 11/15/17.
-//  Copyright © 2017 Jack Pettit. All rights reserved.
-//
+//  November 15, 2017
+*/
 
 #ifndef STATICSEM_HPP
 #define STATICSEM_HPP

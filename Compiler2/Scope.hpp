@@ -1,13 +1,13 @@
-//
+/*
+//  Jack Pettit
+//  CS 4280
 //  Scope.hpp
 //  Compiler2
-//
-//  Created by Jack Pettit on 11/15/17.
-//  Copyright © 2017 Jack Pettit. All rights reserved.
-//
+//  November 15, 2017
+*/
 
-#ifndef Scope_hpp
-#define Scope_hpp
+#ifndef SCOPE_HPP
+#define SCOPE_HPP
 
 #include "Token.hpp"
 
@@ -34,4 +34,4 @@ public:
     void addVar(const Token);
     int checkIfVarIsInCurrentScope(const Token, int&, bool&) const;
 };
-#endif /* Scope_hpp */
+#endif /* SCOPE_HPP */

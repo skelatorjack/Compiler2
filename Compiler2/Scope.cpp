@@ -1,11 +1,13 @@
-//
-//  Scope.cpp
-//  Compiler2
-//
-//  Created by Jack Pettit on 11/15/17.
-//  Copyright © 2017 Jack Pettit. All rights reserved.
-//
+/*
+ //  Jack Pettit
+ //  CS 4280
+ //  Scope.cpp
+ //  Compiler2
+ //  November 15, 2017
+ */
 
+
+// NOTE: m_depthOfThisScope is never used
 #include "Scope.hpp"
 
 Scope::Scope(int var_count, int depth_of_scope) {
