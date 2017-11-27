@@ -8,7 +8,7 @@
 
 #include "ParseTree.hpp"
 
-ParseTree::ParseTree(shared_ptr<ParseNode> new_root) : m_root(new_root), m_staticSem() {
+ParseTree::ParseTree(shared_ptr<ParseNode> new_root, string file_base_name, string file_extension) : m_root(new_root), m_staticSem() {
     
 }
 

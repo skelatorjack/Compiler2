@@ -31,7 +31,7 @@ private:
     bool doesTokenOfNodeMatchGivenTokenId(const Token, const TokenId) const;
     
 public:
-    ParseTree(shared_ptr<ParseNode> = nullptr);
+    ParseTree(shared_ptr<ParseNode> = nullptr, string = "", string = ".asm");
     ~ParseTree();
     void setRoot(shared_ptr<ParseNode> = nullptr);
     shared_ptr<ParseNode> getRoot() const;
