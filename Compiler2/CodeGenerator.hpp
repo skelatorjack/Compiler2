@@ -12,6 +12,11 @@
 #include "Includes.hpp"
 #include "ParseNode.hpp"
 
+enum BranchType {
+  BR, BRNEG, BRPOS,
+  BRZERO, BRZNEG, BRZPOS
+};
+
 class CodeGenerator {
 private:
     vector<string> m_list_of_vars;
@@ -24,16 +29,15 @@ private:
     
     // Nonterminals
     void generateProgram(const ParseNode);
-    void generateVars(const ParseNode);
-    void generateMvars(const ParseNode);
+    void generateVarsOrMvars(const ParseNode);
     void generateBlock(const ParseNode);
     void generateExpr(const ParseNode);
     void generateM(const ParseNode);
-    void generateR(const ParseNode);
-    void generateIn(const ParseNode);
+    void generateR(const ParseNode, const int);
+    void generateIn(const ParseNode, const int);
     void generateIf(const ParseNode);
     void generateLoop(const ParseNode);
-    void generateAssign(const ParseNode);
+    void generateAssign(const ParseNode, const int);
     void generateRO(const ParseNode);
     
     void writeStop();
@@ -41,6 +45,19 @@ private:
     void writeVars();
     void writePush();
     void writePop();
+    void writeLoad(const string);
+    void writeWrite(const string);
+    void writeAdd(const string);
+    void writeStore(const string);
+    void writeSub(const string);
+    void writeDiv(const string);
+    void writeMult(const string);
+    void writeBranch(const string, const BranchType);
+    void writeStackR(const int);
+    void writeStackW(const int);
+    void writeRead(const string);
+    void writeCopy();
+    bool isVarsOrMvars(const ParseNode);
 public:
     CodeGenerator(string, string);
     ~CodeGenerator();
