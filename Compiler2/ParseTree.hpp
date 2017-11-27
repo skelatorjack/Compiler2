@@ -32,6 +32,9 @@ private:
     
     bool doesTokenOfNodeMatchGivenTokenId(const Token, const TokenId) const;
     
+    int staticSem(const shared_ptr<ParseNode>);
+    void codeGen(const shared_ptr<ParseNode>, const int);
+    
 public:
     ParseTree(shared_ptr<ParseNode> = nullptr, string = "", string = ".asm");
     ~ParseTree();
