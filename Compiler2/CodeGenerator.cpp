@@ -45,6 +45,9 @@ void CodeGenerator::closeFile() {
     }
 }
 
+void CodeGenerator::removeFile() {
+    remove(m_full_file_name.c_str());
+}
 // Private methods
 
 string CodeGenerator::buildFullFileName(const string basename, const string extension) {

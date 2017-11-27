@@ -40,13 +40,20 @@ void Compiler::runFrontEnd() {
 }
 
 void Compiler::runBackEnd() {
-    m_parseTree.runStaticSem();
+    try {
+        m_parseTree.runStaticSem();
+    }
+    catch (int errorCode) {
+        m_parseTree.removeOutputFile();
+        exit(errorCode);
+    }
 }
 
 string Compiler::buildFullFile() {
     return m_inputFileName.append(getFileExtension());
 }
 
+/*
 void Compiler::setParseTree(ParseTree new_parseTree) {
     this->m_parseTree = new_parseTree;
 }
@@ -54,6 +61,7 @@ void Compiler::setParseTree(ParseTree new_parseTree) {
 ParseTree Compiler::getParseTree() const {
     return m_parseTree;
 }
+*/
 
 void Compiler::setRedirectedFile(string redirected_file) {
     m_redirectedFile = redirected_file;

@@ -50,6 +50,7 @@ public:
     void setFullFileName(const string);
     void closeFile();
     void openFile();
+    void removeFile();
 };
 
 #endif /* CODEGENERATOR_HPP */

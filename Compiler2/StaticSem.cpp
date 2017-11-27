@@ -102,8 +102,8 @@ void StaticSem::reportError(const Token TOKEN,  const int ERROR_CODE) const {
         default:
             break;
     }
-    
-    exit(ERROR_CODE);
+    throw ERROR_CODE;
+    //exit(ERROR_CODE);
 }
 
 void StaticSem::printErrorInfo(const Token TOKEN, const int ERROR_CODE) const {

@@ -8,7 +8,7 @@
 
 #include "ParseTree.hpp"
 
-ParseTree::ParseTree(shared_ptr<ParseNode> new_root, string file_base_name, string file_extension) : m_root(new_root), m_staticSem() {
+ParseTree::ParseTree(shared_ptr<ParseNode> new_root, string file_base_name, string file_extension) : m_root(new_root), m_staticSem(), m_codegen(file_base_name, file_extension) {
     
 }
 
@@ -45,6 +45,10 @@ void ParseTree::setRoot(shared_ptr<ParseNode> newRoot) {
 
 shared_ptr<ParseNode> ParseTree::getRoot() const {
     return m_root;
+}
+
+void ParseTree::removeOutputFile() {
+    m_codegen.removeFile();
 }
 
 void ParseTree::traverseTree(shared_ptr<ParseNode> current_node) {

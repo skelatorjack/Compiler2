@@ -12,11 +12,13 @@
 #include "Includes.hpp"
 #include "ParseNode.hpp"
 #include "StaticSem.hpp"
+#include "CodeGenerator.hpp"
 
 class ParseTree {
 private:
     shared_ptr<ParseNode> m_root;
     StaticSem m_staticSem;
+    CodeGenerator m_codegen;
     
     bool isNodeNull(shared_ptr<ParseNode>) const;
     void printNode(shared_ptr<ParseNode>);
@@ -37,5 +39,6 @@ public:
     shared_ptr<ParseNode> getRoot() const;
     void traverseTree(shared_ptr<ParseNode>);
     void runStaticSem();
+    void removeOutputFile();
 };
 #endif /* ParseTree_hpp */
