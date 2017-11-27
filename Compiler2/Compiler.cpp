@@ -7,7 +7,7 @@
 
 #include "Compiler.hpp"
 
-Compiler::Compiler(string inputFileName, string extension, string redirectedFile) : m_inputFileName(inputFileName), m_redirectedFile(redirectedFile),  m_EXTENSION(extension), m_parseTree() {
+Compiler::Compiler(string inputFileName, string extension, string redirectedFile, string output_extension) : m_inputFileName(inputFileName), m_redirectedFile(redirectedFile),  m_EXTENSION(extension), m_parseTree() {
     
     setFullFileName(buildFullFile());
     

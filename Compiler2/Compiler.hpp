@@ -26,7 +26,7 @@ private:
     void setPreprocessorFile(const string);
     
 public:
-    Compiler(string="", string=".fs17", string="");
+    Compiler(string="", string=".fs17", string="", string=".asm");
     ~Compiler();
     void setInputFileName(string);
     string getInputFileName() const;
