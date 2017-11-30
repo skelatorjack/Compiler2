@@ -39,6 +39,7 @@ public:
     void removeCurrentScope();
     void addVarToCurrentScope(const Token);
     int searchForToken(const Token) const;
+    int getVarsInScope() const;
     
 };
 

@@ -65,6 +65,10 @@ int StaticSem::searchForToken(const Token TOKEN_TO_SEARCH) const {
     return result;
 }
 
+int StaticSem::getVarsInScope() const {
+    return m_listOfScopes.back().getVarCount();
+}
+
 void StaticSem::setTotalVars(const int NEW_VARCOUNT) {
     m_totalVars = NEW_VARCOUNT;
 }
