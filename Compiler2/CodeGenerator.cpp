@@ -17,23 +17,28 @@ CodeGenerator::~CodeGenerator() {
     deinit();
 }
 
-
 void CodeGenerator::generateCode() {
+    openFile();
     traverseTree(m_parseTree.getRoot());
+    closeFile();
 }
 
 void CodeGenerator::codeGen(const shared_ptr<ParseNode> CUR_NODE) {
     if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "expr")) {
         exprTraversal(CUR_NODE);
+        return;
     }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "if")) {
         ifTraversal(CUR_NODE);
+        return;
     }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "M")) {
         mTraversal(CUR_NODE);
+        return;
     }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "Loop")) {
         loopTraversal(CUR_NODE);
+        return;
     }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "block")) {
         m_staticSemantics.addNewScope();
@@ -44,27 +49,43 @@ void CodeGenerator::codeGen(const shared_ptr<ParseNode> CUR_NODE) {
     }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "out")) {
         generateOut(CUR_NODE);
+        return;
     }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "assign")) {
         generateAssign(CUR_NODE);
+        return;
     }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "R")) {
         generateR(CUR_NODE);
+        return;
     }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "F")) {
         generateF(CUR_NODE);
+        return;
     }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "RO")) {
         generateRO(CUR_NODE);
+        return;
     }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "in")) {
         generateIn(CUR_NODE);
+        return;
     }
-    else {
-        traverseTree(CUR_NODE->getChild(firstChild));
-        traverseTree(CUR_NODE->getChild(secondChild));
-        traverseTree(CUR_NODE->getChild(thirdChild));
-        traverseTree(CUR_NODE->getChild(fourthChild));
+
+    traverseTree(CUR_NODE->getChild(firstChild));
+    traverseTree(CUR_NODE->getChild(secondChild));
+    traverseTree(CUR_NODE->getChild(thirdChild));
+    traverseTree(CUR_NODE->getChild(fourthChild));
+    
+    if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "block")) {
+        const int TIMES_TO_POP = m_staticSemantics.getVarsInScope();
+        m_staticSemantics.removeCurrentScope();
+        popVars(TIMES_TO_POP);
+    }
+    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "program")) {
+        const int TIMES_TO_POP = m_staticSemantics.getVarsInScope();
+        popVars(TIMES_TO_POP);
+        generateProgram(CUR_NODE);
     }
 }
 void CodeGenerator::traverseTree(const shared_ptr<ParseNode> CUR_NODE) {
@@ -73,15 +94,6 @@ void CodeGenerator::traverseTree(const shared_ptr<ParseNode> CUR_NODE) {
     }
     
     codeGen(CUR_NODE);
-    
-    if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "block")) {
-        const int TIMES_TO_POP = m_staticSemantics.getVarsInScope();
-        m_staticSemantics.removeCurrentScope();
-        popVars(TIMES_TO_POP);
-    }
-    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "program")) {
-        generateProgram(CUR_NODE);
-    }
 }
 void CodeGenerator::exprTraversal(const shared_ptr<ParseNode> CURRENT_NODE) {
     if (CURRENT_NODE->getStoredToken().doesTokenMatchId(Plus_tk) || CURRENT_NODE->getStoredToken().doesTokenMatchId(Minus_tk)) {
@@ -183,6 +195,10 @@ void CodeGenerator::generateExpr(const shared_ptr<ParseNode> CUR_NODE) {
     
 }
 
+void CodeGenerator::mTraversal(const shared_ptr<ParseNode> CUR_NODE) {
+    
+}
+
 void CodeGenerator::generateM(const shared_ptr<ParseNode> CUR_NODE) {
     
 }
@@ -191,11 +207,27 @@ void CodeGenerator::generateR(const shared_ptr<ParseNode> CUR_NODE) {
     
 }
 
+void CodeGenerator::generateOut(const shared_ptr<ParseNode> CUR_NODE) {
+    
+}
+
 void CodeGenerator::generateIn(const shared_ptr<ParseNode> CUR_NODE) {
+    const int POS = m_staticSemantics.searchForToken(CUR_NODE->getStoredToken());
+    
+    writeRead(CUR_NODE->getStoredToken().getTokenInstance());
+    writeLoad(CUR_NODE->getStoredToken().getTokenInstance());
+    writeStackW(POS);
+}
+
+void CodeGenerator::ifTraversal(const shared_ptr<ParseNode> CUR_NODE) {
     
 }
 
 void CodeGenerator::generateIf(const shared_ptr<ParseNode> CUR_NODE) {
+    
+}
+
+void CodeGenerator::loopTraversal(const shared_ptr<ParseNode> CUR_NODE) {
     
 }
 
@@ -204,6 +236,10 @@ void CodeGenerator::generateLoop(const shared_ptr<ParseNode> CUR_NODE) {
 }
 
 void CodeGenerator::generateAssign(const shared_ptr<ParseNode> CUR_NODE) {
+    
+}
+
+void CodeGenerator::generateF(const shared_ptr<ParseNode> CUR_NODE) {
     
 }
 
