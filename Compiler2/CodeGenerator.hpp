@@ -10,7 +10,8 @@
 #define CODEGENERATOR_HPP
 
 #include "Includes.hpp"
-#include "ParseNode.hpp"
+#include "ParseTree.hpp"
+#include "StaticSem.hpp"
 
 enum BranchType {
   BR, BRNEG, BRPOS,
@@ -20,25 +21,34 @@ enum BranchType {
 class CodeGenerator {
 private:
     vector<string> m_list_of_vars;
+    vector<string> m_listOfLabels;
+    vector<string> m_listOfTempVars;
+    
     ofstream m_output_file;
+    
     string m_full_file_name;
     
+    StaticSem m_staticSemantics;
+    ParseTree m_parseTree;
+    
     string buildFullFileName(const string, const string);
-    void addVarToList(const ParseNode);
+    void addVarToList(const shared_ptr<ParseNode>);
     void deinit();
     
     // Nonterminals
-    void generateProgram(const ParseNode);
-    void generateVarsOrMvars(const ParseNode);
-    void generateBlock(const ParseNode);
-    void generateExpr(const ParseNode);
-    void generateM(const ParseNode);
-    void generateR(const ParseNode, const int);
-    void generateIn(const ParseNode, const int);
-    void generateIf(const ParseNode);
-    void generateLoop(const ParseNode);
-    void generateAssign(const ParseNode, const int);
-    void generateRO(const ParseNode);
+    void generateProgram(const shared_ptr<ParseNode>);
+    void generateVarsOrMvars(const shared_ptr<ParseNode>);
+    void generateBlock(const int);
+    void generateExpr(const shared_ptr<ParseNode>);
+    void generateM(const shared_ptr<ParseNode>);
+    void generateR(const shared_ptr<ParseNode>);
+    void generateIn(const shared_ptr<ParseNode>);
+    void generateIf(const shared_ptr<ParseNode>);
+    void generateLoop(const shared_ptr<ParseNode>);
+    void generateAssign(const shared_ptr<ParseNode>);
+    void generateRO(const shared_ptr<ParseNode>);
+    void generateOut(const shared_ptr<ParseNode>);
+    void generateF(const shared_ptr<ParseNode>);
     
     void writeStop();
     void writeNewLine();
@@ -57,17 +67,30 @@ private:
     void writeStackW(const int);
     void writeRead(const string);
     void writeCopy();
-    bool isVarsOrMvars(const ParseNode);
-public:
-    CodeGenerator(string, string);
-    ~CodeGenerator();
-    void generateCode(const ParseNode);
+    bool isVarsOrMvars(const shared_ptr<ParseNode>);
+    string createLabel();
+    string createTempVariable();
     void popVars(const int);
+    void exprTraversal(const shared_ptr<ParseNode>);
+    void ifTraversal(const shared_ptr<ParseNode>);
+    void loopTraversal(const shared_ptr<ParseNode>);
+    void mTraversal(const shared_ptr<ParseNode>);
+    string getTempVariable(const int);
+    void traverseTree(const shared_ptr<ParseNode>);
+    void codeGen(const shared_ptr<ParseNode>);
+    
+public:
+    CodeGenerator(string, string, int=-2);
+    ~CodeGenerator();
+    void generateCode();
     string getFullFileName() const;
     void setFullFileName(const string);
     void closeFile();
     void openFile();
     void removeFile();
+    int getPosition() const;
+    void setPosition(const int);
+    void setParseTree(const ParseTree);
 };
 
 #endif /* CODEGENERATOR_HPP */

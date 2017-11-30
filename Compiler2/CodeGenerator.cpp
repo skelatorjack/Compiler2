@@ -8,7 +8,7 @@
 
 #include "CodeGenerator.hpp"
 
-CodeGenerator::CodeGenerator(string basename, string extension): m_list_of_vars(), m_output_file(), m_full_file_name("") {
+CodeGenerator::CodeGenerator(string basename, string extension, int position): m_list_of_vars(), m_output_file(), m_full_file_name(""), m_staticSemantics(), m_parseTree() {
     
     setFullFileName(buildFullFileName(basename, extension));
 }
@@ -17,14 +17,85 @@ CodeGenerator::~CodeGenerator() {
     deinit();
 }
 
-void CodeGenerator::generateCode(const ParseNode CUR_NODE) {
-    
+
+void CodeGenerator::generateCode() {
+    traverseTree(m_parseTree.getRoot());
 }
 
+void CodeGenerator::codeGen(const shared_ptr<ParseNode> CUR_NODE) {
+    if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "expr")) {
+        exprTraversal(CUR_NODE);
+    }
+    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "if")) {
+        ifTraversal(CUR_NODE);
+    }
+    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "M")) {
+        mTraversal(CUR_NODE);
+    }
+    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "Loop")) {
+        loopTraversal(CUR_NODE);
+    }
+    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "block")) {
+        m_staticSemantics.addNewScope();
+    }
+    else if (m_parseTree.doesNodeDeclareVars(CUR_NODE) && m_parseTree.doesNodeHoldToken(CUR_NODE)) {
+        m_staticSemantics.addVarToCurrentScope(CUR_NODE->getStoredToken());
+        generateVarsOrMvars(CUR_NODE);
+    }
+    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "out")) {
+        generateOut(CUR_NODE);
+    }
+    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "assign")) {
+        generateAssign(CUR_NODE);
+    }
+    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "R")) {
+        generateR(CUR_NODE);
+    }
+    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "F")) {
+        generateF(CUR_NODE);
+    }
+    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "RO")) {
+        generateRO(CUR_NODE);
+    }
+    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "in")) {
+        generateIn(CUR_NODE);
+    }
+    else {
+        traverseTree(CUR_NODE->getChild(firstChild));
+        traverseTree(CUR_NODE->getChild(secondChild));
+        traverseTree(CUR_NODE->getChild(thirdChild));
+        traverseTree(CUR_NODE->getChild(fourthChild));
+    }
+}
+void CodeGenerator::traverseTree(const shared_ptr<ParseNode> CUR_NODE) {
+    if (m_parseTree.isNodeNull(CUR_NODE)) {
+        return;
+    }
+    
+    codeGen(CUR_NODE);
+    
+    if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "block")) {
+        const int TIMES_TO_POP = m_staticSemantics.getVarsInScope();
+        m_staticSemantics.removeCurrentScope();
+        popVars(TIMES_TO_POP);
+    }
+    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "program")) {
+        generateProgram(CUR_NODE);
+    }
+}
+void CodeGenerator::exprTraversal(const shared_ptr<ParseNode> CURRENT_NODE) {
+    if (CURRENT_NODE->getStoredToken().doesTokenMatchId(Plus_tk) || CURRENT_NODE->getStoredToken().doesTokenMatchId(Minus_tk)) {
+        generateExpr(CURRENT_NODE);
+    }
+}
 void CodeGenerator::popVars(const int NUM_OF_VARS) {
     for (int i = 0; i < NUM_OF_VARS; i++) {
         writePop();
     }
+}
+
+void CodeGenerator::setParseTree(const ParseTree newTree) {
+    m_parseTree = newTree;
 }
 
 string CodeGenerator::getFullFileName() const {
@@ -46,6 +117,7 @@ void CodeGenerator::closeFile() {
 }
 
 void CodeGenerator::removeFile() {
+    closeFile();
     remove(m_full_file_name.c_str());
 }
 // Private methods
@@ -58,8 +130,8 @@ string CodeGenerator::buildFullFileName(const string basename, const string exte
     return str.str();
 }
 
-void CodeGenerator::addVarToList(const ParseNode CUR_NODE) {
-    m_list_of_vars.push_back(CUR_NODE.getStoredToken().getTokenInstance());
+void CodeGenerator::addVarToList(const shared_ptr<ParseNode> CUR_NODE) {
+    m_list_of_vars.push_back(CUR_NODE->getStoredToken().getTokenInstance());
 }
 
 void CodeGenerator::deinit() {
@@ -67,50 +139,97 @@ void CodeGenerator::deinit() {
     m_full_file_name.clear();
 }
 
-void CodeGenerator::generateProgram(const ParseNode CUR_NODE) {
+void CodeGenerator::generateProgram(const shared_ptr<ParseNode> CUR_NODE) {
     writeStop();
     writeVars();
 }
 
-void CodeGenerator::generateVarsOrMvars(const ParseNode CUR_NODE) {
+void CodeGenerator::generateVarsOrMvars(const shared_ptr<ParseNode> CUR_NODE) {
     writePush();
     addVarToList(CUR_NODE);
 }
 
-void CodeGenerator::generateBlock(const ParseNode CUR_NODE) {
+string CodeGenerator::createLabel() {
+    return "";
+}
+
+string CodeGenerator::createTempVariable() {
+    string temp_var = "";
+    const string UNDER_SCORE = "_";
+    const string SIZE = to_string(m_listOfLabels.size());
+    
+    temp_var.append(UNDER_SCORE);
+    temp_var.append(SIZE);
+    
+    return temp_var;
+}
+
+string CodeGenerator::getTempVariable(const int INDEX) {
+    if (INDEX > m_listOfTempVars.size()) {
+        return m_listOfTempVars.back();
+    }
+    else if (INDEX < 0) {
+        return m_listOfTempVars.front();
+    }
+    
+    return m_listOfTempVars.at(INDEX);
+}
+
+void CodeGenerator::generateBlock(const int NUM_VARS) {
+    popVars(NUM_VARS);
+}
+
+void CodeGenerator::generateExpr(const shared_ptr<ParseNode> CUR_NODE) {
     
 }
 
-void CodeGenerator::generateExpr(const ParseNode CUR_NODE) {
+void CodeGenerator::generateM(const shared_ptr<ParseNode> CUR_NODE) {
     
 }
 
-void CodeGenerator::generateM(const ParseNode CUR_NODE) {
+void CodeGenerator::generateR(const shared_ptr<ParseNode> CUR_NODE) {
     
 }
 
-void CodeGenerator::generateR(const ParseNode CUR_NODE, const int POS) {
+void CodeGenerator::generateIn(const shared_ptr<ParseNode> CUR_NODE) {
     
 }
 
-void CodeGenerator::generateIn(const ParseNode CUR_NODE, const int POS) {
+void CodeGenerator::generateIf(const shared_ptr<ParseNode> CUR_NODE) {
     
 }
 
-void CodeGenerator::generateIf(const ParseNode CUR_NODE) {
+void CodeGenerator::generateLoop(const shared_ptr<ParseNode> CUR_NODE) {
     
 }
 
-void CodeGenerator::generateLoop(const ParseNode CUR_NODE) {
+void CodeGenerator::generateAssign(const shared_ptr<ParseNode> CUR_NODE) {
     
 }
 
-void CodeGenerator::generateAssign(const ParseNode CUR_NODE, const int POS) {
+void CodeGenerator::generateRO(const shared_ptr<ParseNode> CUR_NODE) {
+    const TokenId RELOP = CUR_NODE->getStoredToken().getTokenId();
     
-}
-
-void CodeGenerator::generateRO(const ParseNode CUR_NODE) {
-    
+    if (RELOP == LTE_tk) {
+        writeBranch("label", BRPOS);
+    }
+    else if (RELOP == LT_tk) {
+        writeBranch("label", BRZPOS);
+    }
+    else if (RELOP == GTE_tk) {
+        writeBranch("label", BRNEG);
+    }
+    else if (RELOP == GT_tk) {
+        writeBranch("label", BRZNEG);
+    }
+    else if (RELOP == DoubleEqual_tk) {
+        writeBranch("label", BRPOS);
+        writeNewLine();
+        writeBranch("label", BRNEG);
+    }
+    else if (RELOP == ExclEqual_tk) {
+        writeBranch("LABEL", BRZERO);
+    }
 }
 
 void CodeGenerator::writeStop() {
@@ -175,7 +294,37 @@ void CodeGenerator::writeMult(const string CUR_INSTANCE) {
 }
 
 void CodeGenerator::writeBranch(const string CUR_INSTANCE, const BranchType COND) {
+    switch(COND) {
+        case BRZERO:
+            m_output_file << "BRZERO ";
+            break;
+            
+        case BRNEG:
+            m_output_file << "BRNEG ";
+            break;
+        
+        case BRZPOS:
+            m_output_file << "BRZPOS ";
+            break;
+            
+        case BRPOS:
+            m_output_file << "BRPOS ";
+            break;
+            
+        case BRZNEG:
+            m_output_file << "BRZNEG ";
+            break;
+            
+        case BR:
+            m_output_file << "BR ";
+            break;
+            
+        default:
+            break;
+    }
     
+    m_output_file << CUR_INSTANCE;
+    writeNewLine();
 }
 
 void CodeGenerator::writeStackR(const int POS) {
@@ -197,8 +346,8 @@ void CodeGenerator::writeCopy() {
     
 }
 
-bool CodeGenerator::isVarsOrMvars(const ParseNode CUR_NODE) {
-    const string NONTERMINAL = CUR_NODE.getNonTerminal();
+bool CodeGenerator::isVarsOrMvars(const shared_ptr<ParseNode> CUR_NODE) {
+    const string NONTERMINAL = CUR_NODE->getNonTerminal();
     
     return NONTERMINAL == "vars" || NONTERMINAL == "mvars";
 }
