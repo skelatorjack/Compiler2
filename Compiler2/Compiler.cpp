@@ -7,7 +7,7 @@
 
 #include "Compiler.hpp"
 
-Compiler::Compiler(string inputFileName, string extension, string redirectedFile, string output_extension) : m_inputFileName(inputFileName), m_redirectedFile(redirectedFile),  m_EXTENSION(extension), m_parseTree() {
+Compiler::Compiler(string inputFileName, string extension, string redirectedFile, string output_extension) : m_inputFileName(inputFileName), m_redirectedFile(redirectedFile),  m_EXTENSION(extension), m_parseTree(), m_codeGenerator(inputFileName, output_extension) {
     
     setFullFileName(buildFullFile());
     
@@ -41,10 +41,11 @@ void Compiler::runFrontEnd() {
 
 void Compiler::runBackEnd() {
     try {
-        m_parseTree.runStaticSem();
+        m_codeGenerator.setParseTree(m_parseTree);
+        m_codeGenerator.generateCode();
     }
     catch (int errorCode) {
-        m_parseTree.removeOutputFile();
+        m_codeGenerator.removeFile();
         exit(errorCode);
     }
 }

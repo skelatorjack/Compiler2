@@ -11,6 +11,7 @@
 
 #include "Includes.hpp"
 #include "Parser.hpp"
+#include "CodeGenerator.hpp"
 
 class Compiler {
 private:
@@ -20,6 +21,7 @@ private:
     string m_redirectedFile;
     Parser m_parser;
     ParseTree m_parseTree;
+    CodeGenerator m_codeGenerator;
     
     string buildFullFile();
     bool wasInputRedirected();
