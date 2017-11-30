@@ -8,7 +8,7 @@
 
 #include "ParseTree.hpp"
 
-ParseTree::ParseTree(shared_ptr<ParseNode> new_root, string file_base_name, string file_extension) : m_root(new_root), m_staticSem(), m_codegen(file_base_name, file_extension) {
+ParseTree::ParseTree(shared_ptr<ParseNode> new_root, string file_base_name, string file_extension) : m_root(new_root), m_staticSem() {
     
 }
 
@@ -48,25 +48,27 @@ shared_ptr<ParseNode> ParseTree::getRoot() const {
 }
 
 void ParseTree::removeOutputFile() {
-    m_codegen.removeFile();
 }
 
-void ParseTree::traverseTree(shared_ptr<ParseNode> current_node) {
+void ParseTree::traverseTree(const shared_ptr<ParseNode> CUR_NODE) {
     
-    if (isNodeNull(current_node)) {
+    if (isNodeNull(CUR_NODE)) {
         return;
     }
     
-    const int POS = staticSem(current_node);
-    codeGen(current_node, POS);
+    if (isSpecialTraversal(CUR_NODE)) {
+        
+    }
+    else {
+        normalTraversal(CUR_NODE);
+    }
     
-    traverseTree(current_node->getChild(firstChild));
-    traverseTree(current_node->getChild(secondChild));
-    traverseTree(current_node->getChild(thirdChild));
-    traverseTree(current_node->getChild(fourthChild));
-    
-    if (isNodeABlock(current_node)) {
+    if (isNodeABlock(CUR_NODE)) {
+        const int VARS_IN_SCOPE = m_staticSem.getVarsInScope();
         m_staticSem.removeCurrentScope();
+    }
+    else if (doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "program")) {
+
     }
 }
 
@@ -84,6 +86,35 @@ int ParseTree::staticSem(const shared_ptr<ParseNode> CURRENT_NODE) {
     }
     
     return pos;
+}
+
+bool ParseTree::isSpecialTraversal(const shared_ptr<ParseNode> CUR_NODE) {
+    bool isSpecialTraversal = false;
+    
+    if (doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "expr")) {
+        isSpecialTraversal = true;
+    }
+    else if (doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "M")) {
+        isSpecialTraversal = true;
+    }
+    else if (doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "out")) {
+        isSpecialTraversal = true;
+    }
+    else if (doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "in")) {
+        isSpecialTraversal = true;
+    }
+    
+    return isSpecialTraversal;
+}
+
+void ParseTree::normalTraversal(const shared_ptr<ParseNode> CUR_NODE) {
+    const int POS = staticSem(CUR_NODE);
+    codeGen(CUR_NODE, POS);
+    
+    traverseTree(CUR_NODE->getChild(firstChild));
+    traverseTree(CUR_NODE->getChild(secondChild));
+    traverseTree(CUR_NODE->getChild(thirdChild));
+    traverseTree(CUR_NODE->getChild(fourthChild));
 }
 
 void ParseTree::codeGen(const shared_ptr<ParseNode> CURRENT_NODE, const int POS) {
