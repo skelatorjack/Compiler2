@@ -32,7 +32,7 @@ private:
     ParseTree m_parseTree;
     
     string buildFullFileName(const string, const string);
-    void addVarToList(const shared_ptr<ParseNode>);
+    void addVarToList(const string);
     void deinit();
     
     // Nonterminals
@@ -67,14 +67,22 @@ private:
     void writeStackW(const int);
     void writeRead(const string);
     void writeCopy();
+    
     bool isVarsOrMvars(const shared_ptr<ParseNode>);
+    
     string createLabel();
     string createTempVariable();
+    
     void popVars(const int);
-    void exprTraversal(const shared_ptr<ParseNode>);
-    void ifTraversal(const shared_ptr<ParseNode>);
-    void loopTraversal(const shared_ptr<ParseNode>);
-    void mTraversal(const shared_ptr<ParseNode>);
+    
+    void exprTraversal(const shared_ptr<ParseNode>, bool&);
+    void ifTraversal(const shared_ptr<ParseNode>, bool&);
+    void loopTraversal(const shared_ptr<ParseNode>, bool&);
+    void rTraversal(const shared_ptr<ParseNode>, bool&);
+    void mTraversal(const shared_ptr<ParseNode>, bool&);
+    void fTraversal(const shared_ptr<ParseNode>, bool&);
+    void outTraversal(const shared_ptr<ParseNode>, bool&);
+    void assignTraversal(const shared_ptr<ParseNode>, bool&);
     string getTempVariable(const int);
     void traverseTree(const shared_ptr<ParseNode>);
     void codeGen(const shared_ptr<ParseNode>);

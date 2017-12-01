@@ -24,21 +24,19 @@ void CodeGenerator::generateCode() {
 }
 
 void CodeGenerator::codeGen(const shared_ptr<ParseNode> CUR_NODE) {
+    bool continueTraversal = true;
+    
     if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "expr")) {
-        exprTraversal(CUR_NODE);
-        return;
+        exprTraversal(CUR_NODE, continueTraversal);
     }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "if")) {
-        ifTraversal(CUR_NODE);
-        return;
+        ifTraversal(CUR_NODE, continueTraversal);
     }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "M")) {
-        mTraversal(CUR_NODE);
-        return;
+        mTraversal(CUR_NODE, continueTraversal);
     }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "Loop")) {
-        loopTraversal(CUR_NODE);
-        return;
+        loopTraversal(CUR_NODE, continueTraversal);
     }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "block")) {
         m_staticSemantics.addNewScope();
@@ -48,34 +46,32 @@ void CodeGenerator::codeGen(const shared_ptr<ParseNode> CUR_NODE) {
         generateVarsOrMvars(CUR_NODE);
     }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "out")) {
-        generateOut(CUR_NODE);
-        return;
+        outTraversal(CUR_NODE, continueTraversal);
     }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "assign")) {
-        generateAssign(CUR_NODE);
-        return;
+        assignTraversal(CUR_NODE, continueTraversal);
     }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "R")) {
-        generateR(CUR_NODE);
-        return;
+        rTraversal(CUR_NODE, continueTraversal);
     }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "F")) {
-        generateF(CUR_NODE);
-        return;
+        fTraversal(CUR_NODE, continueTraversal);
     }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "RO")) {
         generateRO(CUR_NODE);
-        return;
+        continueTraversal = false;
     }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "in")) {
         generateIn(CUR_NODE);
-        return;
+        continueTraversal = false;
     }
 
-    traverseTree(CUR_NODE->getChild(firstChild));
-    traverseTree(CUR_NODE->getChild(secondChild));
-    traverseTree(CUR_NODE->getChild(thirdChild));
-    traverseTree(CUR_NODE->getChild(fourthChild));
+    if (continueTraversal) {
+        traverseTree(CUR_NODE->getChild(firstChild));
+        traverseTree(CUR_NODE->getChild(secondChild));
+        traverseTree(CUR_NODE->getChild(thirdChild));
+        traverseTree(CUR_NODE->getChild(fourthChild));
+    }
     
     if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "block")) {
         const int TIMES_TO_POP = m_staticSemantics.getVarsInScope();
@@ -92,12 +88,12 @@ void CodeGenerator::traverseTree(const shared_ptr<ParseNode> CUR_NODE) {
     if (m_parseTree.isNodeNull(CUR_NODE)) {
         return;
     }
-    
     codeGen(CUR_NODE);
 }
-void CodeGenerator::exprTraversal(const shared_ptr<ParseNode> CURRENT_NODE) {
+void CodeGenerator::exprTraversal(const shared_ptr<ParseNode> CURRENT_NODE, bool &continueTraversal) {
     if (CURRENT_NODE->getStoredToken().doesTokenMatchId(Plus_tk) || CURRENT_NODE->getStoredToken().doesTokenMatchId(Minus_tk)) {
         generateExpr(CURRENT_NODE);
+        continueTraversal = false;
     }
 }
 void CodeGenerator::popVars(const int NUM_OF_VARS) {
@@ -142,8 +138,8 @@ string CodeGenerator::buildFullFileName(const string basename, const string exte
     return str.str();
 }
 
-void CodeGenerator::addVarToList(const shared_ptr<ParseNode> CUR_NODE) {
-    m_list_of_vars.push_back(CUR_NODE->getStoredToken().getTokenInstance());
+void CodeGenerator::addVarToList(const string VAR_NAME) {
+    m_list_of_vars.push_back(VAR_NAME);
 }
 
 void CodeGenerator::deinit() {
@@ -158,7 +154,7 @@ void CodeGenerator::generateProgram(const shared_ptr<ParseNode> CUR_NODE) {
 
 void CodeGenerator::generateVarsOrMvars(const shared_ptr<ParseNode> CUR_NODE) {
     writePush();
-    addVarToList(CUR_NODE);
+    addVarToList(CUR_NODE->getStoredToken().getTokenInstance());
 }
 
 string CodeGenerator::createLabel() {
@@ -166,12 +162,14 @@ string CodeGenerator::createLabel() {
 }
 
 string CodeGenerator::createTempVariable() {
-    string temp_var = "";
+    string temp_var = "temp";
     const string UNDER_SCORE = "_";
-    const string SIZE = to_string(m_listOfLabels.size());
+    const string SIZE = to_string(m_listOfTempVars.size());
     
     temp_var.append(UNDER_SCORE);
     temp_var.append(SIZE);
+    
+    addVarToList(temp_var);
     
     return temp_var;
 }
@@ -192,21 +190,56 @@ void CodeGenerator::generateBlock(const int NUM_VARS) {
 }
 
 void CodeGenerator::generateExpr(const shared_ptr<ParseNode> CUR_NODE) {
+    const string EXPR_TEMP = createTempVariable();
     
+    traverseTree(CUR_NODE->getChild(secondChild));
+    writeStore(EXPR_TEMP);
+    traverseTree(CUR_NODE->getChild(firstChild));
+    
+    if (CUR_NODE->getStoredToken().doesTokenMatchId(Plus_tk)) {
+        writeAdd(EXPR_TEMP);
+    }
+    else {
+        writeSub(EXPR_TEMP);
+    }
 }
 
-void CodeGenerator::mTraversal(const shared_ptr<ParseNode> CUR_NODE) {
-    
+void CodeGenerator::mTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
+    if (m_parseTree.doesNodeHoldToken(CUR_NODE)) {
+        generateM(CUR_NODE);
+        continueTraversal = false;
+    }
 }
 
 void CodeGenerator::generateM(const shared_ptr<ParseNode> CUR_NODE) {
+    const string M_TEMP = createTempVariable();
+    traverseTree(CUR_NODE->getChild(secondChild));
+    writeStore(M_TEMP);
+    traverseTree(CUR_NODE->getChild(firstChild));
     
+    if (CUR_NODE->getStoredToken().doesTokenMatchId(Star_tk)) {
+        writeMult(M_TEMP);
+    }
+    else {
+        writeDiv(M_TEMP);
+    }
+}
+
+void CodeGenerator::rTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
+    if (m_parseTree.doesNodeHoldToken(CUR_NODE)) {
+        generateR(CUR_NODE);
+        continueTraversal = false;
+    }
 }
 
 void CodeGenerator::generateR(const shared_ptr<ParseNode> CUR_NODE) {
-    
+    writeLoad(CUR_NODE->getStoredToken().getTokenInstance());
 }
 
+void CodeGenerator::outTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
+    generateOut(CUR_NODE->getChild(firstChild));
+    continueTraversal = false;
+}
 void CodeGenerator::generateOut(const shared_ptr<ParseNode> CUR_NODE) {
     const string OUT_TEMP_VAR = createTempVariable();
     traverseTree(CUR_NODE->getChild(firstChild));
@@ -222,7 +255,7 @@ void CodeGenerator::generateIn(const shared_ptr<ParseNode> CUR_NODE) {
     writeStackW(POS);
 }
 
-void CodeGenerator::ifTraversal(const shared_ptr<ParseNode> CUR_NODE) {
+void CodeGenerator::ifTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
     
 }
 
@@ -230,7 +263,7 @@ void CodeGenerator::generateIf(const shared_ptr<ParseNode> CUR_NODE) {
     
 }
 
-void CodeGenerator::loopTraversal(const shared_ptr<ParseNode> CUR_NODE) {
+void CodeGenerator::loopTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
     
 }
 
@@ -238,12 +271,22 @@ void CodeGenerator::generateLoop(const shared_ptr<ParseNode> CUR_NODE) {
     
 }
 
+void CodeGenerator::assignTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
+    
+}
 void CodeGenerator::generateAssign(const shared_ptr<ParseNode> CUR_NODE) {
     
 }
 
+void CodeGenerator::fTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
+    if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE->getChild(firstChild), "F")) {
+        generateF(CUR_NODE);
+        continueTraversal = false;
+    }
+}
+
 void CodeGenerator::generateF(const shared_ptr<ParseNode> CUR_NODE) {
-    
+    writeMult("-1");
 }
 
 void CodeGenerator::generateRO(const shared_ptr<ParseNode> CUR_NODE) {
