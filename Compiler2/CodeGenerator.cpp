@@ -174,6 +174,7 @@ string CodeGenerator::createTempVariable() {
     temp_var.append(SIZE);
     
     addVarToList(temp_var);
+    addVarToTempList(temp_var);
     
     return temp_var;
 }
@@ -241,7 +242,7 @@ void CodeGenerator::generateR(const shared_ptr<ParseNode> CUR_NODE) {
 }
 
 void CodeGenerator::outTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
-    generateOut(CUR_NODE->getChild(firstChild));
+    generateOut(CUR_NODE);
     continueTraversal = false;
 }
 void CodeGenerator::generateOut(const shared_ptr<ParseNode> CUR_NODE) {
