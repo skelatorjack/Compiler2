@@ -33,6 +33,7 @@ private:
     
     string buildFullFileName(const string, const string);
     void addVarToList(const string);
+    void addVarToTempList(const string);
     void deinit();
     
     // Nonterminals

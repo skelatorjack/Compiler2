@@ -142,6 +142,10 @@ void CodeGenerator::addVarToList(const string VAR_NAME) {
     m_list_of_vars.push_back(VAR_NAME);
 }
 
+void CodeGenerator::addVarToTempList(const string TEMP_VAR_NAME) {
+    m_listOfTempVars.push_back(TEMP_VAR_NAME);
+}
+
 void CodeGenerator::deinit() {
     m_list_of_vars.clear();
     m_full_file_name.clear();
