@@ -208,7 +208,10 @@ void CodeGenerator::generateR(const shared_ptr<ParseNode> CUR_NODE) {
 }
 
 void CodeGenerator::generateOut(const shared_ptr<ParseNode> CUR_NODE) {
-    
+    const string OUT_TEMP_VAR = createTempVariable();
+    traverseTree(CUR_NODE->getChild(firstChild));
+    writeStore(OUT_TEMP_VAR);
+    writeWrite(OUT_TEMP_VAR);
 }
 
 void CodeGenerator::generateIn(const shared_ptr<ParseNode> CUR_NODE) {
