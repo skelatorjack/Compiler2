@@ -262,11 +262,16 @@ void CodeGenerator::generateIn(const shared_ptr<ParseNode> CUR_NODE) {
 }
 
 void CodeGenerator::ifTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
-    
+    generateIf(CUR_NODE);
+    continueTraversal = false;
 }
 
 void CodeGenerator::generateIf(const shared_ptr<ParseNode> CUR_NODE) {
+    const string THIRD_CHILD;
+    const string FIRST_CHILD;
+    const string IF_JUMP_LABEL;
     
+    traverseTree(CUR_NODE->getChild(thirdChild));
 }
 
 void CodeGenerator::loopTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
