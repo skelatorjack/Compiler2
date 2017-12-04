@@ -208,18 +208,21 @@ string CodeGenerator::createLabel(const LabelType TYPE_OF_LABEL) {
         label_name = "IfSkip";
         label_name.append("_");
         label_name.append(to_string(LABEL_COUNT));
+        setCount(m_ifSkipLabelCount + 1, IfSkip);
     }
     else if (TYPE_OF_LABEL == LoopSkip) {
         const int LABEL_COUNT = getCount(LoopSkip);
         label_name = "LoopSkip";
         label_name.append("_");
         label_name.append(to_string(LABEL_COUNT));
+        setCount(m_LoopSkipLabelCount + 1, LoopSkip);
     }
     else if (TYPE_OF_LABEL == LoopJumpback) {
         const int LABEL_COUNT = getCount(LoopJumpback);
         label_name = "LoopJumpBack";
         label_name.append("_");
         label_name.append(to_string(LABEL_COUNT));
+        setCount(m_LoopJumpBackLabelCount + 1, LoopJumpback);
     }
     
     return label_name;
@@ -370,6 +373,7 @@ void CodeGenerator::fTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &conti
 }
 
 void CodeGenerator::generateF(const shared_ptr<ParseNode> CUR_NODE) {
+    traverseTree(CUR_NODE->getChild(firstChild));
     writeMult("-1");
 }
 
@@ -377,24 +381,23 @@ void CodeGenerator::generateRO(const shared_ptr<ParseNode> CUR_NODE, const strin
     const TokenId RELOP = CUR_NODE->getStoredToken().getTokenId();
     
     if (RELOP == LTE_tk) {
-        writeBranch("label", BRPOS);
+        writeBranch(LABEL, BRPOS);
     }
     else if (RELOP == LT_tk) {
-        writeBranch("label", BRZPOS);
+        writeBranch(LABEL, BRZPOS);
     }
     else if (RELOP == GTE_tk) {
-        writeBranch("label", BRNEG);
+        writeBranch(LABEL, BRNEG);
     }
     else if (RELOP == GT_tk) {
-        writeBranch("label", BRZNEG);
+        writeBranch(LABEL, BRZNEG);
     }
     else if (RELOP == DoubleEqual_tk) {
-        writeBranch("label", BRPOS);
-        writeNewLine();
-        writeBranch("label", BRNEG);
+        writeBranch(LABEL, BRPOS);
+        writeBranch(LABEL, BRNEG);
     }
     else if (RELOP == ExclEqual_tk) {
-        writeBranch("LABEL", BRZERO);
+        writeBranch(LABEL, BRZERO);
     }
 }
 
