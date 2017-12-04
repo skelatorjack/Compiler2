@@ -57,10 +57,6 @@ void CodeGenerator::codeGen(const shared_ptr<ParseNode> CUR_NODE) {
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "F")) {
         fTraversal(CUR_NODE, continueTraversal);
     }
-    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "RO")) {
-        generateRO(CUR_NODE);
-        continueTraversal = false;
-    }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "in")) {
         generateIn(CUR_NODE);
         continueTraversal = false;
@@ -284,6 +280,14 @@ void CodeGenerator::generateIf(const shared_ptr<ParseNode> CUR_NODE) {
     const string IF_JUMP_LABEL = createLabel(IfSkip);
     
     traverseTree(CUR_NODE->getChild(thirdChild));
+    writeStore(THIRD_CHILD_TEMP);
+    traverseTree(CUR_NODE->getChild(firstChild));
+    writeStore(FIRST_CHILD_TEMP);
+    writeSub(THIRD_CHILD_TEMP);
+    generateRO(CUR_NODE->getChild(secondChild), IF_JUMP_LABEL);
+    traverseTree(CUR_NODE->getChild(fourthChild));
+    writeLabel(IF_JUMP_LABEL);
+    writeNoop();
 }
 
 void CodeGenerator::loopTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
@@ -317,7 +321,7 @@ void CodeGenerator::generateF(const shared_ptr<ParseNode> CUR_NODE) {
     writeMult("-1");
 }
 
-void CodeGenerator::generateRO(const shared_ptr<ParseNode> CUR_NODE) {
+void CodeGenerator::generateRO(const shared_ptr<ParseNode> CUR_NODE, const string LABEL) {
     const TokenId RELOP = CUR_NODE->getStoredToken().getTokenId();
     
     if (RELOP == LTE_tk) {
@@ -452,8 +456,18 @@ void CodeGenerator::writeRead(const string CUR_INSTANCE) {
     writeNewLine();
 }
 
-void CodeGenerator::writeCopy() {
-    
+void CodeGenerator::writeCopy(const string COPY_DEST, const string COPY_SRC) {
+    m_output_file << "COPY " << COPY_DEST << " " << COPY_SRC;
+    writeNewLine();
+}
+
+void CodeGenerator::writeLabel(const string LABEL) {
+    m_output_file << LABEL << ": ";
+}
+
+void CodeGenerator::writeNoop() {
+    m_output_file << "NOOP";
+    writeNewLine();
 }
 
 bool CodeGenerator::isVarsOrMvars(const shared_ptr<ParseNode> CUR_NODE) {
