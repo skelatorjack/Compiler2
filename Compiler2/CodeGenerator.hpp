@@ -28,6 +28,10 @@ private:
     vector<string> m_listOfLabels;
     vector<string> m_listOfTempVars;
     
+    int m_ifSkipLabelCount;
+    int m_LoopSkipLabelCount;
+    int m_LoopJumpBackLabelCount;
+    
     ofstream m_output_file;
     
     string m_full_file_name;
@@ -93,9 +97,9 @@ private:
     void codeGen(const shared_ptr<ParseNode>);
     void writeLabel(const string);
     void writeNoop();
-    
+
 public:
-    CodeGenerator(string, string, int=-2);
+    CodeGenerator(string, string, int = 0, int = 0, int = 0);
     ~CodeGenerator();
     void generateCode();
     string getFullFileName() const;
@@ -106,6 +110,8 @@ public:
     int getPosition() const;
     void setPosition(const int);
     void setParseTree(const ParseTree);
+    void setCount(const int, const LabelType);
+    int getCount(const LabelType) const;
 };
 
 #endif /* CODEGENERATOR_HPP */

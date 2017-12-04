@@ -8,7 +8,7 @@
 
 #include "CodeGenerator.hpp"
 
-CodeGenerator::CodeGenerator(string basename, string extension, int position): m_list_of_vars(), m_output_file(), m_full_file_name(""), m_staticSemantics(), m_parseTree() {
+CodeGenerator::CodeGenerator(string basename, string extension, int ifSkipCount, int loopSkipCount, int loopJumpBackCount): m_list_of_vars(), m_output_file(), m_full_file_name(""), m_staticSemantics(), m_parseTree(), m_ifSkipLabelCount(ifSkipCount), m_LoopSkipLabelCount(loopSkipCount), m_LoopJumpBackLabelCount(loopJumpBackCount) {
     
     setFullFileName(buildFullFileName(basename, extension));
 }
@@ -86,6 +86,49 @@ void CodeGenerator::traverseTree(const shared_ptr<ParseNode> CUR_NODE) {
     }
     codeGen(CUR_NODE);
 }
+
+int CodeGenerator::getCount(const LabelType WHICHCOUNT) const {
+    int value = -1;
+    
+    switch(WHICHCOUNT) {
+        case IfSkip:
+            value = m_ifSkipLabelCount;
+            break;
+        
+        case LoopSkip:
+            value = m_LoopSkipLabelCount;
+            break;
+            
+        case LoopJumpback:
+            value = m_LoopJumpBackLabelCount;
+            break;
+            
+        default:
+            break;
+    }
+    
+    return value;
+}
+
+void CodeGenerator::setCount(const int COUNT, const LabelType WHICH_COUNT) {
+    switch(WHICH_COUNT) {
+        case IfSkip:
+            m_ifSkipLabelCount = COUNT;
+            break;
+            
+        case LoopSkip:
+            m_LoopSkipLabelCount = COUNT;
+            break;
+            
+        case LoopJumpback:
+            m_LoopJumpBackLabelCount = COUNT;
+            break;
+            
+        default:
+            break;
+    }
+}
+
 void CodeGenerator::exprTraversal(const shared_ptr<ParseNode> CURRENT_NODE, bool &continueTraversal) {
     if (CURRENT_NODE->getStoredToken().doesTokenMatchId(Plus_tk) || CURRENT_NODE->getStoredToken().doesTokenMatchId(Minus_tk)) {
         generateExpr(CURRENT_NODE);
@@ -161,13 +204,22 @@ string CodeGenerator::createLabel(const LabelType TYPE_OF_LABEL) {
     string label_name;
     
     if (TYPE_OF_LABEL == IfSkip) {
-        
+        const int LABEL_COUNT = getCount(IfSkip);
+        label_name = "IfSkip";
+        label_name.append("_");
+        label_name.append(to_string(LABEL_COUNT));
     }
     else if (TYPE_OF_LABEL == LoopSkip) {
-        
+        const int LABEL_COUNT = getCount(LoopSkip);
+        label_name = "LoopSkip";
+        label_name.append("_");
+        label_name.append(to_string(LABEL_COUNT));
     }
     else if (TYPE_OF_LABEL == LoopJumpback) {
-        
+        const int LABEL_COUNT = getCount(LoopJumpback);
+        label_name = "LoopJumpBack";
+        label_name.append("_");
+        label_name.append(to_string(LABEL_COUNT));
     }
     
     return label_name;
