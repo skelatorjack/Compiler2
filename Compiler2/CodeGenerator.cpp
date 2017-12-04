@@ -245,6 +245,7 @@ void CodeGenerator::outTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &con
     generateOut(CUR_NODE);
     continueTraversal = false;
 }
+
 void CodeGenerator::generateOut(const shared_ptr<ParseNode> CUR_NODE) {
     const string OUT_TEMP_VAR = createTempVariable();
     traverseTree(CUR_NODE->getChild(firstChild));
@@ -277,10 +278,15 @@ void CodeGenerator::generateLoop(const shared_ptr<ParseNode> CUR_NODE) {
 }
 
 void CodeGenerator::assignTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
-    
+    traverseTree(CUR_NODE->getChild(firstChild));
+    generateAssign(CUR_NODE);
+    continueTraversal = false;
 }
 void CodeGenerator::generateAssign(const shared_ptr<ParseNode> CUR_NODE) {
+    const int POS = m_staticSemantics.searchForToken(CUR_NODE->getStoredToken());
     
+    writeStore(CUR_NODE->getStoredToken().getTokenInstance());
+    writeStackW(POS);
 }
 
 void CodeGenerator::fTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
