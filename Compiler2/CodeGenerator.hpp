@@ -18,6 +18,10 @@ enum BranchType {
   BRZERO, BRZNEG, BRZPOS
 };
 
+enum LabelType {
+  IfSkip, LoopSkip, LoopJumpback
+};
+
 class CodeGenerator {
 private:
     vector<string> m_list_of_vars;
@@ -71,7 +75,7 @@ private:
     
     bool isVarsOrMvars(const shared_ptr<ParseNode>);
     
-    string createLabel();
+    string createLabel(const LabelType);
     string createTempVariable();
     
     void popVars(const int);
