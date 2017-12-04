@@ -161,8 +161,20 @@ void CodeGenerator::generateVarsOrMvars(const shared_ptr<ParseNode> CUR_NODE) {
     addVarToList(CUR_NODE->getStoredToken().getTokenInstance());
 }
 
-string CodeGenerator::createLabel() {
-    return "";
+string CodeGenerator::createLabel(const LabelType TYPE_OF_LABEL) {
+    string label_name;
+    
+    if (TYPE_OF_LABEL == IfSkip) {
+        
+    }
+    else if (TYPE_OF_LABEL == LoopSkip) {
+        
+    }
+    else if (TYPE_OF_LABEL == LoopJumpback) {
+        
+    }
+    
+    return label_name;
 }
 
 string CodeGenerator::createTempVariable() {
@@ -267,9 +279,9 @@ void CodeGenerator::ifTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &cont
 }
 
 void CodeGenerator::generateIf(const shared_ptr<ParseNode> CUR_NODE) {
-    const string THIRD_CHILD;
-    const string FIRST_CHILD;
-    const string IF_JUMP_LABEL;
+    const string THIRD_CHILD_TEMP = createTempVariable();
+    const string FIRST_CHILD_TEMP = createTempVariable();
+    const string IF_JUMP_LABEL = createLabel(IfSkip);
     
     traverseTree(CUR_NODE->getChild(thirdChild));
 }
