@@ -51,7 +51,7 @@ private:
     void generateIf(const shared_ptr<ParseNode>);
     void generateLoop(const shared_ptr<ParseNode>);
     void generateAssign(const shared_ptr<ParseNode>);
-    void generateRO(const shared_ptr<ParseNode>);
+    void generateRO(const shared_ptr<ParseNode>, const string);
     void generateOut(const shared_ptr<ParseNode>);
     void generateF(const shared_ptr<ParseNode>);
     
@@ -71,7 +71,7 @@ private:
     void writeStackR(const int);
     void writeStackW(const int);
     void writeRead(const string);
-    void writeCopy();
+    void writeCopy(const string, const string);
     
     bool isVarsOrMvars(const shared_ptr<ParseNode>);
     
@@ -91,6 +91,8 @@ private:
     string getTempVariable(const int);
     void traverseTree(const shared_ptr<ParseNode>);
     void codeGen(const shared_ptr<ParseNode>);
+    void writeLabel(const string);
+    void writeNoop();
     
 public:
     CodeGenerator(string, string, int=-2);
