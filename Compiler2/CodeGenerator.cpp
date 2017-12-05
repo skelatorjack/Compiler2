@@ -346,7 +346,8 @@ void CodeGenerator::generateIf(const shared_ptr<ParseNode> CUR_NODE) {
 }
 
 void CodeGenerator::loopTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
-    
+    generateLoop(CUR_NODE);
+    continueTraversal = false;
 }
 
 void CodeGenerator::generateLoop(const shared_ptr<ParseNode> CUR_NODE) {
@@ -354,13 +355,14 @@ void CodeGenerator::generateLoop(const shared_ptr<ParseNode> CUR_NODE) {
 }
 
 void CodeGenerator::assignTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
-    traverseTree(CUR_NODE->getChild(firstChild));
+    //traverseTree(CUR_NODE->getChild(firstChild));
     generateAssign(CUR_NODE);
     continueTraversal = false;
 }
 void CodeGenerator::generateAssign(const shared_ptr<ParseNode> CUR_NODE) {
     const int POS = m_staticSemantics.searchForToken(CUR_NODE->getStoredToken());
     
+    traverseTree(CUR_NODE->getChild(firstChild));
     writeStore(CUR_NODE->getStoredToken().getTokenInstance());
     writeStackW(POS);
 }
