@@ -35,7 +35,7 @@ void CodeGenerator::codeGen(const shared_ptr<ParseNode> CUR_NODE) {
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "M")) {
         mTraversal(CUR_NODE, continueTraversal);
     }
-    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "Loop")) {
+    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "loop")) {
         loopTraversal(CUR_NODE, continueTraversal);
     }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "block")) {
@@ -301,6 +301,10 @@ void CodeGenerator::rTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &conti
 }
 
 void CodeGenerator::generateR(const shared_ptr<ParseNode> CUR_NODE) {
+    if (CUR_NODE->getStoredToken().doesTokenMatchId(Ident_tk)) {
+        const int POS = m_staticSemantics.searchForToken(CUR_NODE->getStoredToken());
+        writeStackR(POS);
+    }
     writeLoad(CUR_NODE->getStoredToken().getTokenInstance());
 }
 
@@ -351,7 +355,20 @@ void CodeGenerator::loopTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &co
 }
 
 void CodeGenerator::generateLoop(const shared_ptr<ParseNode> CUR_NODE) {
+    const string LOOP_TEMP = createTempVariable();
+    const string LOOP_JUMP_OUT = createLabel(LoopSkip);
+    const string LOOP_JUMP_BACK = createLabel(LoopJumpback);
     
+    writeLabel(LOOP_JUMP_BACK);
+    traverseTree(CUR_NODE->getChild(thirdChild));
+    writeStore(LOOP_TEMP);
+    traverseTree(CUR_NODE->getChild(firstChild));
+    writeSub(LOOP_TEMP);
+    generateRO(CUR_NODE->getChild(secondChild), LOOP_JUMP_OUT);
+    traverseTree(CUR_NODE->getChild(fourthChild));
+    writeBranch(LOOP_JUMP_BACK, BR);
+    writeLabel(LOOP_JUMP_OUT);
+    writeNoop();
 }
 
 void CodeGenerator::assignTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
