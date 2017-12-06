@@ -10,8 +10,8 @@ OBJDBG=${OBJ} ${DBG}
 EXEC=-o
 STD=--std=c++11
 
-comp: main.o CharReader.o Preprocessor.o Token.o Scanner.o ParseNode.o ParseTree.o Parser.o StaticSem.o Scope.o Compiler.o
-	${GPP} ${EXEC} comp ${DBG} ${STD} main.o CharReader.o Preprocessor.o Token.o Scanner.o ParseNode.o ParseTree.o Parser.o StaticSem.o Scope.o Compiler.o
+comp: main.o CharReader.o Preprocessor.o Token.o Scanner.o ParseNode.o ParseTree.o Parser.o StaticSem.o Scope.o CodeGenerator.o Compiler.o
+	${GPP} ${EXEC} comp ${DBG} ${STD} main.o CharReader.o Preprocessor.o Token.o Scanner.o ParseNode.o ParseTree.o Parser.o StaticSem.o Scope.o CodeGenerator.o Compiler.o
 
 main.o: Includes.hpp Compiler.hpp main.cpp
 	${GPP} ${OBJDBG} ${STD} Includes.hpp Compiler.hpp main.cpp
@@ -45,6 +45,9 @@ StaticSem.o: StaticSem.hpp StaticSem.cpp
 
 Scope.o: Scope.hpp Scope.cpp
 	${GPP} ${OBJDBG} ${STD} Scope.hpp Scope.cpp
+
+CodeGenerator.o: CodeGenerator.hpp CodeGenerator.cpp
+	${GPP} ${OBJDBG} ${STD} CodeGenerator.hpp CodeGenerator.cpp
 
 clean:
 	rm *.o *.gch comp 
