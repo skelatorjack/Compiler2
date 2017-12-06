@@ -69,6 +69,10 @@ void CodeGenerator::codeGen(const shared_ptr<ParseNode> CUR_NODE) {
         traverseTree(CUR_NODE->getChild(fourthChild));
     }
     
+    checkForGenerationAfterTraversal(CUR_NODE);
+}
+
+void CodeGenerator::checkForGenerationAfterTraversal(const shared_ptr<ParseNode> CUR_NODE) {
     if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "block")) {
         const int TIMES_TO_POP = m_staticSemantics.getVarsInScope();
         m_staticSemantics.removeCurrentScope();
@@ -87,6 +91,7 @@ void CodeGenerator::traverseTree(const shared_ptr<ParseNode> CUR_NODE) {
     codeGen(CUR_NODE);
 }
 
+// Get count from a specific type of label
 int CodeGenerator::getCount(const LabelType WHICHCOUNT) const {
     int value = -1;
     
@@ -110,6 +115,7 @@ int CodeGenerator::getCount(const LabelType WHICHCOUNT) const {
     return value;
 }
 
+// Set Count for a specific type of label
 void CodeGenerator::setCount(const int COUNT, const LabelType WHICH_COUNT) {
     switch(WHICH_COUNT) {
         case IfSkip:
@@ -187,12 +193,18 @@ void CodeGenerator::addVarToTempList(const string TEMP_VAR_NAME) {
 
 void CodeGenerator::deinit() {
     m_list_of_vars.clear();
+    m_listOfTempVars.clear();
     m_full_file_name.clear();
+    setCount(-1, IfSkip);
+    setCount(-1, LoopSkip);
+    setCount(-1, LoopJumpback);
 }
 
+// Need to add writeTempVars
 void CodeGenerator::generateProgram(const shared_ptr<ParseNode> CUR_NODE) {
     writeStop();
     writeVars();
+    writeTempVars();
 }
 
 void CodeGenerator::generateVarsOrMvars(const shared_ptr<ParseNode> CUR_NODE) {
@@ -200,32 +212,35 @@ void CodeGenerator::generateVarsOrMvars(const shared_ptr<ParseNode> CUR_NODE) {
     addVarToList(CUR_NODE->getStoredToken().getTokenInstance());
 }
 
+// Need to refactor
 string CodeGenerator::createLabel(const LabelType TYPE_OF_LABEL) {
     string label_name;
     
     if (TYPE_OF_LABEL == IfSkip) {
         const int LABEL_COUNT = getCount(IfSkip);
         label_name = "IfSkip";
-        label_name.append("_");
-        label_name.append(to_string(LABEL_COUNT));
+        buildLabel(label_name, LABEL_COUNT);
         setCount(m_ifSkipLabelCount + 1, IfSkip);
     }
     else if (TYPE_OF_LABEL == LoopSkip) {
         const int LABEL_COUNT = getCount(LoopSkip);
         label_name = "LoopSkip";
-        label_name.append("_");
-        label_name.append(to_string(LABEL_COUNT));
+        buildLabel(label_name, LABEL_COUNT);
         setCount(m_LoopSkipLabelCount + 1, LoopSkip);
     }
     else if (TYPE_OF_LABEL == LoopJumpback) {
         const int LABEL_COUNT = getCount(LoopJumpback);
         label_name = "LoopJumpBack";
-        label_name.append("_");
-        label_name.append(to_string(LABEL_COUNT));
+        buildLabel(label_name, LABEL_COUNT);
         setCount(m_LoopJumpBackLabelCount + 1, LoopJumpback);
     }
     
     return label_name;
+}
+
+void CodeGenerator::buildLabel(string &label_name, const int COUNT) {
+    label_name.append("_");
+    label_name.append(to_string(COUNT));
 }
 
 string CodeGenerator::createTempVariable() {
@@ -235,13 +250,13 @@ string CodeGenerator::createTempVariable() {
     
     temp_var.append(UNDER_SCORE);
     temp_var.append(SIZE);
-    
-    addVarToList(temp_var);
+
     addVarToTempList(temp_var);
     
     return temp_var;
 }
 
+// DON'T NEED THIS FUNCTION
 string CodeGenerator::getTempVariable(const int INDEX) {
     if (INDEX > m_listOfTempVars.size()) {
         return m_listOfTempVars.back();
@@ -272,6 +287,7 @@ void CodeGenerator::generateExpr(const shared_ptr<ParseNode> CUR_NODE) {
     }
 }
 
+// Check if we should continue traversing M node.
 void CodeGenerator::mTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
     if (m_parseTree.doesNodeHoldToken(CUR_NODE)) {
         generateM(CUR_NODE);
@@ -293,6 +309,7 @@ void CodeGenerator::generateM(const shared_ptr<ParseNode> CUR_NODE) {
     }
 }
 
+// Check if we should continue traversing R
 void CodeGenerator::rTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
     if (m_parseTree.doesNodeHoldToken(CUR_NODE)) {
         generateR(CUR_NODE);
@@ -349,6 +366,7 @@ void CodeGenerator::generateIf(const shared_ptr<ParseNode> CUR_NODE) {
     writeNoop();
 }
 
+// Generate loop
 void CodeGenerator::loopTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
     generateLoop(CUR_NODE);
     continueTraversal = false;
@@ -376,6 +394,7 @@ void CodeGenerator::assignTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &
     generateAssign(CUR_NODE);
     continueTraversal = false;
 }
+
 void CodeGenerator::generateAssign(const shared_ptr<ParseNode> CUR_NODE) {
     const int POS = m_staticSemantics.searchForToken(CUR_NODE->getStoredToken());
     
@@ -384,6 +403,7 @@ void CodeGenerator::generateAssign(const shared_ptr<ParseNode> CUR_NODE) {
     writeStackW(POS);
 }
 
+// Check if we should continue traversing F
 void CodeGenerator::fTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
     if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE->getChild(firstChild), "F")) {
         generateF(CUR_NODE);
@@ -429,9 +449,20 @@ void CodeGenerator::writeNewLine() {
     m_output_file << endl;
 }
 
+void CodeGenerator::writeVar(const string VAR_NAME, const string VALUE) {
+    m_output_file << VAR_NAME << " " << VALUE;
+}
+
 void CodeGenerator::writeVars() {
     for (int i = 0; i < m_list_of_vars.size(); i++) {
-        m_output_file << m_list_of_vars.at(i) << " " << "0";
+        writeVar(m_list_of_vars.at(i), "0");
+        writeNewLine();
+    }
+}
+
+void CodeGenerator::writeTempVars() {
+    for (int i = 0; i < m_listOfTempVars.size(); i++) {
+        writeVar(m_listOfTempVars.at(i), "0");
         writeNewLine();
     }
 }
