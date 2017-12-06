@@ -76,13 +76,19 @@ private:
     void writeStackW(const int);
     void writeRead(const string);
     void writeCopy(const string, const string);
-    
+    void writeTempVars();
+    void writeVar(const string, const string);
+
     bool isVarsOrMvars(const shared_ptr<ParseNode>);
+    
+    void checkForGenerationAfterTraversal(const shared_ptr<ParseNode>);
     
     string createLabel(const LabelType);
     string createTempVariable();
     
     void popVars(const int);
+    
+    void buildLabel(string&, const int);
     
     void exprTraversal(const shared_ptr<ParseNode>, bool&);
     void ifTraversal(const shared_ptr<ParseNode>, bool&);
