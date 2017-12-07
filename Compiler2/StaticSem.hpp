@@ -39,8 +39,8 @@ public:
     void removeCurrentScope();
     void addVarToCurrentScope(const Token);
     int searchForToken(const Token) const;
-    int getVarsInScope() const;
-    
+    int getVarCountInScope() const;
+    deque<Token> getVarsInScope() const;
 };
 
 #endif
