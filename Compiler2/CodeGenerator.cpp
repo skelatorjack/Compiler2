@@ -8,7 +8,7 @@
 
 #include "CodeGenerator.hpp"
 
-CodeGenerator::CodeGenerator(string basename, string extension, int ifSkipCount, int loopSkipCount, int loopJumpBackCount): m_list_of_vars(), m_output_file(), m_full_file_name(""), m_staticSemantics(), m_parseTree(), m_ifSkipLabelCount(ifSkipCount), m_LoopSkipLabelCount(loopSkipCount), m_LoopJumpBackLabelCount(loopJumpBackCount) {
+CodeGenerator::CodeGenerator(string basename, string extension, int ifSkipCount, int loopSkipCount, int loopJumpBackCount): m_list_of_vars(), m_output_file(), m_full_file_name(""), m_staticSemantics(), m_parseTree(), m_ifSkipLabelCount(ifSkipCount), m_LoopSkipLabelCount(loopSkipCount), m_LoopJumpBackLabelCount(loopJumpBackCount), m_listOfDupVars(), m_listOfDuplicateVarCounts() {
     
     setFullFileName(buildFullFileName(basename, extension));
 }
@@ -74,12 +74,13 @@ void CodeGenerator::codeGen(const shared_ptr<ParseNode> CUR_NODE) {
 
 void CodeGenerator::checkForGenerationAfterTraversal(const shared_ptr<ParseNode> CUR_NODE) {
     if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "block")) {
-        const int TIMES_TO_POP = m_staticSemantics.getVarsInScope();
+        const int TIMES_TO_POP = m_staticSemantics.getVarCountInScope();
+        removeVarsFromList();
         m_staticSemantics.removeCurrentScope();
         popVars(TIMES_TO_POP);
     }
     else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "program")) {
-        const int TIMES_TO_POP = m_staticSemantics.getVarsInScope();
+        const int TIMES_TO_POP = m_staticSemantics.getVarCountInScope();
         popVars(TIMES_TO_POP);
         generateProgram(CUR_NODE);
     }
@@ -209,9 +210,80 @@ void CodeGenerator::generateProgram(const shared_ptr<ParseNode> CUR_NODE) {
 
 void CodeGenerator::generateVarsOrMvars(const shared_ptr<ParseNode> CUR_NODE) {
     writePush();
-    addVarToList(CUR_NODE->getStoredToken().getTokenInstance());
+    addVarToDuplicateList(CUR_NODE->getStoredToken().getTokenInstance());
+    addVarToList(getVarFromList(CUR_NODE->getStoredToken().getTokenInstance()));
 }
 
+// Need to refactor
+void CodeGenerator::addVarToDuplicateList(const string DUP_NAME) {
+    map<string, vector<string>>::iterator it = m_listOfDupVars.find(DUP_NAME);
+    map<string, int>::iterator var = m_listOfDuplicateVarCounts.find(DUP_NAME);
+    
+    if (it != m_listOfDupVars.end() && var != m_listOfDuplicateVarCounts.end()) {
+        it->second.push_back(renameVar(DUP_NAME, var->second));
+    }
+    else {
+        vector<string> list;
+        list.push_back(DUP_NAME);
+        m_listOfDupVars.insert(pair<string, vector<string>>(DUP_NAME, list));
+    }
+    
+    addVarToDuplicateVarCount(DUP_NAME);
+}
+
+void CodeGenerator::addVarToDuplicateVarCount(const string DUP_NAME) {
+    map<string, int>::iterator it = m_listOfDuplicateVarCounts.find(DUP_NAME);
+    
+    if (it != m_listOfDuplicateVarCounts.end()) {
+        it->second++;
+    }
+    else {
+        m_listOfDuplicateVarCounts.insert(pair<string, int>(DUP_NAME, 1));
+    }
+}
+
+string CodeGenerator::getVarFromList(const string KEY) {
+    map<string, vector<string>>::iterator dupList = m_listOfDupVars.find(KEY);
+    map<string, vector<string>>::const_iterator END = m_listOfDupVars.end();
+    
+    string varString = "";
+    
+    if (dupList != END) {
+        varString = dupList->second.back();
+    }
+    else {
+        varString = "";
+    }
+    
+    return varString;
+}
+
+void CodeGenerator::removeVarsFromList() {
+    const deque<Token> VAR_LIST_OF_SCOPE = m_staticSemantics.getVarsInScope();
+    
+    for (int i = 0; i < VAR_LIST_OF_SCOPE.size(); i++) {
+        const Token VAR = VAR_LIST_OF_SCOPE.at(i);
+        removeFromList(VAR.getTokenInstance());
+    }
+}
+
+void CodeGenerator::removeFromList(const string KEY) {
+    map<string, vector<string>>::iterator dupListIterator = m_listOfDupVars.find(KEY);
+    
+    if (dupListIterator != m_listOfDupVars.end()) {
+        dupListIterator->second.pop_back();
+    }
+}
+
+string CodeGenerator::renameVar(const string NAME, const unsigned long SIZE) {
+    string varName = "";
+    
+    varName.append(NAME);
+    varName.append("_");
+    varName.append(to_string(SIZE));
+    
+    return varName;
+}
 // Need to refactor
 string CodeGenerator::createLabel(const LabelType TYPE_OF_LABEL) {
     string label_name;

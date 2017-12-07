@@ -39,6 +39,9 @@ private:
     StaticSem m_staticSemantics;
     ParseTree m_parseTree;
     
+    map<string, vector<string>> m_listOfDupVars;
+    map<string, int> m_listOfDuplicateVarCounts;
+    
     string buildFullFileName(const string, const string);
     void addVarToList(const string);
     void addVarToTempList(const string);
@@ -103,6 +106,13 @@ private:
     void codeGen(const shared_ptr<ParseNode>);
     void writeLabel(const string);
     void writeNoop();
+    
+    void addVarToDuplicateVarCount(const string);
+    void addVarToDuplicateList(const string);
+    void removeFromList(const string);
+    void removeVarsFromList();
+    string renameVar(const string, const unsigned long);
+    string getVarFromList(const string);
 
 public:
     CodeGenerator(string, string, int = 0, int = 0, int = 0);
