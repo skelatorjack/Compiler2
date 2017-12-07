@@ -390,11 +390,18 @@ void CodeGenerator::rTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &conti
 }
 
 void CodeGenerator::generateR(const shared_ptr<ParseNode> CUR_NODE) {
+    const string TOKEN_NAME = CUR_NODE->getStoredToken().getTokenInstance();
+    
     if (CUR_NODE->getStoredToken().doesTokenMatchId(Ident_tk)) {
         const int POS = m_staticSemantics.searchForToken(CUR_NODE->getStoredToken());
+        const string VAR_NAME = getVarFromList(TOKEN_NAME);
+        
         writeStackR(POS);
+        writeLoad(VAR_NAME);
     }
-    writeLoad(CUR_NODE->getStoredToken().getTokenInstance());
+    else {
+        writeLoad(TOKEN_NAME);
+    }
 }
 
 void CodeGenerator::outTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
@@ -411,9 +418,11 @@ void CodeGenerator::generateOut(const shared_ptr<ParseNode> CUR_NODE) {
 
 void CodeGenerator::generateIn(const shared_ptr<ParseNode> CUR_NODE) {
     const int POS = m_staticSemantics.searchForToken(CUR_NODE->getStoredToken());
+    const string KEY_NAME = CUR_NODE->getStoredToken().getTokenInstance();
+    const string VAR = getVarFromList(KEY_NAME);
     
-    writeRead(CUR_NODE->getStoredToken().getTokenInstance());
-    writeLoad(CUR_NODE->getStoredToken().getTokenInstance());
+    writeRead(VAR);
+    writeLoad(VAR);
     writeStackW(POS);
 }
 
@@ -462,16 +471,17 @@ void CodeGenerator::generateLoop(const shared_ptr<ParseNode> CUR_NODE) {
 }
 
 void CodeGenerator::assignTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
-    //traverseTree(CUR_NODE->getChild(firstChild));
     generateAssign(CUR_NODE);
     continueTraversal = false;
 }
 
 void CodeGenerator::generateAssign(const shared_ptr<ParseNode> CUR_NODE) {
     const int POS = m_staticSemantics.searchForToken(CUR_NODE->getStoredToken());
+    const string KEY = CUR_NODE->getStoredToken().getTokenInstance();
+    const string VAR = getVarFromList(KEY);
     
     traverseTree(CUR_NODE->getChild(firstChild));
-    writeStore(CUR_NODE->getStoredToken().getTokenInstance());
+    writeStore(VAR);
     writeStackW(POS);
 }
 
