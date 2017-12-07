@@ -64,7 +64,7 @@ void ParseTree::traverseTree(const shared_ptr<ParseNode> CUR_NODE) {
     }
     
     if (isNodeABlock(CUR_NODE)) {
-        const int VARS_IN_SCOPE = m_staticSem.getVarsInScope();
+        //const int VARS_IN_SCOPE = m_staticSem.getVarsInScope();
         m_staticSem.removeCurrentScope();
     }
     else if (doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "program")) {
