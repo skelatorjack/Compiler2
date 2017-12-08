@@ -51,3 +51,6 @@ CodeGenerator.o: CodeGenerator.hpp CodeGenerator.cpp
 
 clean:
 	rm *.o *.gch comp 
+
+cleanAsm:
+	rm *.asm
