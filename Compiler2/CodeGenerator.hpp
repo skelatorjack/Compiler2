@@ -114,6 +114,8 @@ private:
     string renameVar(const string, const unsigned long);
     string getVarFromList(const string);
 
+    void statTraversal(const shared_ptr<ParseNode>, bool&);
+    void specialNonStatTraversal(const shared_ptr<ParseNode>, bool&);
 public:
     CodeGenerator(string, string, int = 0, int = 0, int = 0);
     ~CodeGenerator();

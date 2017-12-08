@@ -23,75 +23,6 @@ void CodeGenerator::generateCode() {
     closeFile();
 }
 
-void CodeGenerator::codeGen(const shared_ptr<ParseNode> CUR_NODE) {
-    bool continueTraversal = true;
-    
-    if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "expr")) {
-        exprTraversal(CUR_NODE, continueTraversal);
-    }
-    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "if")) {
-        ifTraversal(CUR_NODE, continueTraversal);
-    }
-    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "M")) {
-        mTraversal(CUR_NODE, continueTraversal);
-    }
-    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "loop")) {
-        loopTraversal(CUR_NODE, continueTraversal);
-    }
-    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "block")) {
-        m_staticSemantics.addNewScope();
-    }
-    else if (m_parseTree.doesNodeDeclareVars(CUR_NODE) && m_parseTree.doesNodeHoldToken(CUR_NODE)) {
-        m_staticSemantics.addVarToCurrentScope(CUR_NODE->getStoredToken());
-        generateVarsOrMvars(CUR_NODE);
-    }
-    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "out")) {
-        outTraversal(CUR_NODE, continueTraversal);
-    }
-    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "assign")) {
-        assignTraversal(CUR_NODE, continueTraversal);
-    }
-    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "R")) {
-        rTraversal(CUR_NODE, continueTraversal);
-    }
-    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "F")) {
-        fTraversal(CUR_NODE, continueTraversal);
-    }
-    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "in")) {
-        generateIn(CUR_NODE);
-        continueTraversal = false;
-    }
-
-    if (continueTraversal) {
-        traverseTree(CUR_NODE->getChild(firstChild));
-        traverseTree(CUR_NODE->getChild(secondChild));
-        traverseTree(CUR_NODE->getChild(thirdChild));
-        traverseTree(CUR_NODE->getChild(fourthChild));
-    }
-    
-    checkForGenerationAfterTraversal(CUR_NODE);
-}
-
-void CodeGenerator::checkForGenerationAfterTraversal(const shared_ptr<ParseNode> CUR_NODE) {
-    if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "block")) {
-        const int TIMES_TO_POP = m_staticSemantics.getVarCountInScope();
-        removeVarsFromList();
-        m_staticSemantics.removeCurrentScope();
-        popVars(TIMES_TO_POP);
-    }
-    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "program")) {
-        const int TIMES_TO_POP = m_staticSemantics.getVarCountInScope();
-        popVars(TIMES_TO_POP);
-        generateProgram(CUR_NODE);
-    }
-}
-void CodeGenerator::traverseTree(const shared_ptr<ParseNode> CUR_NODE) {
-    if (m_parseTree.isNodeNull(CUR_NODE)) {
-        return;
-    }
-    codeGen(CUR_NODE);
-}
-
 // Get count from a specific type of label
 int CodeGenerator::getCount(const LabelType WHICHCOUNT) const {
     int value = -1;
@@ -174,7 +105,86 @@ void CodeGenerator::removeFile() {
     closeFile();
     remove(m_full_file_name.c_str());
 }
+
 // Private methods
+
+void CodeGenerator::codeGen(const shared_ptr<ParseNode> CUR_NODE) {
+    bool continueTraversal = true;
+    
+    statTraversal(CUR_NODE, continueTraversal);
+    specialNonStatTraversal(CUR_NODE, continueTraversal);
+    
+    if (continueTraversal) {
+        traverseTree(CUR_NODE->getChild(firstChild));
+        traverseTree(CUR_NODE->getChild(secondChild));
+        traverseTree(CUR_NODE->getChild(thirdChild));
+        traverseTree(CUR_NODE->getChild(fourthChild));
+    }
+    
+    checkForGenerationAfterTraversal(CUR_NODE);
+}
+
+void CodeGenerator::statTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
+    if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "if")) {
+        ifTraversal(CUR_NODE, continueTraversal);
+    }
+    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "loop")) {
+        loopTraversal(CUR_NODE, continueTraversal);
+    }
+    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "out")) {
+        outTraversal(CUR_NODE, continueTraversal);
+    }
+    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "assign")) {
+        assignTraversal(CUR_NODE, continueTraversal);
+    }
+    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "in")) {
+        generateIn(CUR_NODE);
+        continueTraversal = false;
+    }
+}
+
+void CodeGenerator::specialNonStatTraversal(const shared_ptr<ParseNode> CUR_NODE, bool &continueTraversal) {
+    if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "expr")) {
+        exprTraversal(CUR_NODE, continueTraversal);
+    }
+    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "M")) {
+        mTraversal(CUR_NODE, continueTraversal);
+    }
+    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "block")) {
+        m_staticSemantics.addNewScope();
+    }
+    else if (m_parseTree.doesNodeDeclareVars(CUR_NODE) && m_parseTree.doesNodeHoldToken(CUR_NODE)) {
+        m_staticSemantics.addVarToCurrentScope(CUR_NODE->getStoredToken());
+        generateVarsOrMvars(CUR_NODE);
+    }
+    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "R")) {
+        rTraversal(CUR_NODE, continueTraversal);
+    }
+    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "F")) {
+        fTraversal(CUR_NODE, continueTraversal);
+    }
+}
+
+void CodeGenerator::checkForGenerationAfterTraversal(const shared_ptr<ParseNode> CUR_NODE) {
+    if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "block")) {
+        const int TIMES_TO_POP = m_staticSemantics.getVarCountInScope();
+        removeVarsFromList();
+        m_staticSemantics.removeCurrentScope();
+        popVars(TIMES_TO_POP);
+    }
+    else if (m_parseTree.doesNonterminalOfNodeMatchGivenNonterminal(CUR_NODE, "program")) {
+        const int TIMES_TO_POP = m_staticSemantics.getVarCountInScope();
+        popVars(TIMES_TO_POP);
+        generateProgram(CUR_NODE);
+    }
+}
+
+void CodeGenerator::traverseTree(const shared_ptr<ParseNode> CUR_NODE) {
+    if (m_parseTree.isNodeNull(CUR_NODE)) {
+        return;
+    }
+    codeGen(CUR_NODE);
+}
 
 string CodeGenerator::buildFullFileName(const string basename, const string extension) {
     stringstream str;
@@ -201,20 +211,19 @@ void CodeGenerator::deinit() {
     setCount(-1, LoopJumpback);
 }
 
-// Need to add writeTempVars
 void CodeGenerator::generateProgram(const shared_ptr<ParseNode> CUR_NODE) {
     writeStop();
     writeVars();
     writeTempVars();
 }
 
+// Vars and mvars do the same thing so they are combined into one function
 void CodeGenerator::generateVarsOrMvars(const shared_ptr<ParseNode> CUR_NODE) {
     writePush();
     addVarToDuplicateList(CUR_NODE->getStoredToken().getTokenInstance());
     addVarToList(getVarFromList(CUR_NODE->getStoredToken().getTokenInstance()));
 }
 
-// Need to refactor
 void CodeGenerator::addVarToDuplicateList(const string DUP_NAME) {
     map<string, vector<string>>::iterator it = m_listOfDupVars.find(DUP_NAME);
     map<string, int>::iterator var = m_listOfDuplicateVarCounts.find(DUP_NAME);
@@ -231,6 +240,7 @@ void CodeGenerator::addVarToDuplicateList(const string DUP_NAME) {
     addVarToDuplicateVarCount(DUP_NAME);
 }
 
+// Increment the duplicate var count or create a new entry
 void CodeGenerator::addVarToDuplicateVarCount(const string DUP_NAME) {
     map<string, int>::iterator it = m_listOfDuplicateVarCounts.find(DUP_NAME);
     
@@ -242,6 +252,7 @@ void CodeGenerator::addVarToDuplicateVarCount(const string DUP_NAME) {
     }
 }
 
+// Get the current duplicate var
 string CodeGenerator::getVarFromList(const string KEY) {
     map<string, vector<string>>::iterator dupList = m_listOfDupVars.find(KEY);
     map<string, vector<string>>::const_iterator END = m_listOfDupVars.end();
