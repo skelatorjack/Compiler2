@@ -48,6 +48,7 @@ static void preprocessArgs(int argCount, const char* args [], string &fileName, 
     }
     else {
         cout << "File is not valid. Exiting program\n";
+        exit(11);
     }
     
 }
