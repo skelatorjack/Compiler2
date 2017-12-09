@@ -20,6 +20,7 @@
 #include <deque>
 #include <memory>
 #include <iomanip>
+#include <algorithm>
 
 using namespace std;
 #endif /* Includes_h */
