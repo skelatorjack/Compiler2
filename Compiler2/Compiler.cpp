@@ -5,6 +5,7 @@
 //  October 10, 2017
 */
 
+
 #include "Compiler.hpp"
 
 Compiler::Compiler(string inputFileName, string extension, string redirectedFile, string output_extension) : m_inputFileName(inputFileName), m_redirectedFile(redirectedFile),  m_EXTENSION(extension), m_parseTree(), m_codeGenerator(inputFileName, output_extension) {
